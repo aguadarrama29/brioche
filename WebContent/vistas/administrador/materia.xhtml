@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Catálogo de Materia P</ui:define>
+	<ui:define name="metadata" />
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				<small>Administración - Materia Prima</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-home"></i>Catálogo Materia
+						Prima</a></li>
+			</ol>
+			</section>
+			<p:growl id="msg" showDetail="true" autoUpdate="false" />
+			
+			<section class="content"> <h:form id="principal">
+
+				<p:panel style="width:100%;">
+
+					<h:panelGrid columns="1" style="width:100%;">
+						<p:panelGrid columns="3" id="captura">
+
+							<f:facet name="header"> Materia Prima:</f:facet>
+
+							<p:outputLabel for="nombre" value="Nombre:"
+								style="font-weight:bold;" />
+							<p:inputText id="nombre" value="#{materiaMB.materia.descripcion}"
+								required="true" requiredMessage="Debe ingresar un nombre." />
+							<p:message for="nombre" />
+
+							<p:outputLabel for="canti" value="Cantidad:"
+								style="font-weight:bold;" />
+							<p:inputText id="canti" value="#{materiaMB.materia.cantidad}"
+								required="false" requiredMessage="Debe ingresar un cantidad."
+								readonly="false" />
+							<p:message for="canti" />
+
+							<p:outputLabel for="costo" value="Costo por Kilo:"
+								style="font-weight:bold;" />
+							<p:inputText id="costo" value="#{materiaMB.materia.costoKilo}"
+								required="false" requiredMessage="Debe ingresar un cantidad."
+								readonly="false" />
+							<p:message for="costo" />
+
+							<p:outputLabel for="unidad" value="Unidad Medida:"
+								style="font-weight:bold;" />
+							<p:autoComplete id="unidad" size="50" queryDelay="2000"
+								queryDeletionDelay="1000" value="#{materiaMB.catUnidadMedida}"
+								completeMethod="#{materiaMB.completeUnidades}" var="i"
+								itemValue="#{i}" itemLabel="#{i.descripcion}"
+								forceSelection="true" placeholder="unidad de medida..."
+								emptyMessage="Sin resultados" converter="#{unidadConverter}"
+								scrollHeight="200">
+
+
+								<f:facet name="itemtip">
+									<h:panelGrid columns="2" cellpadding="5">
+										<h:outputText value="Abreviatura:" />
+										<h:outputText value="#{i.abreviatura}" />
+									</h:panelGrid>
+								</f:facet>
+							</p:autoComplete>
+							<p:message for="unidad" />
+
+							<p:outputLabel for="provee" value="Proveedores:"
+								style="font-weight:bold;" />
+							<p:autoComplete id="provee" size="50" queryDelay="2000"
+								queryDeletionDelay="1000" value="#{materiaMB.catProveedor}"
+								completeMethod="#{materiaMB.completeProveedores}" var="i"
+								itemValue="#{i}" itemLabel="#{i.descripcion}"
+								forceSelection="true" placeholder="proveedores..."
+								emptyMessage="Sin resultados" converter="#{proveedorConverter}"
+								scrollHeight="200">
+
+
+								<f:facet name="itemtip">
+									<h:panelGrid columns="2" cellpadding="5">
+										<h:outputText value="Razon Social" />
+										<h:outputText value="#{i.razonSocial}" />
+									</h:panelGrid>
+								</f:facet>
+							</p:autoComplete>
+							<p:message for="provee" />
+
+							<p:outputLabel for="ubica" value="Ubicación:"
+								style="font-weight:bold;" />
+							<p:autoComplete id="ubica" size="50" queryDelay="2000"
+								queryDeletionDelay="1000" value="#{materiaMB.catUbicacion}"
+								completeMethod="#{materiaMB.completeUbicaciones}" var="i"
+								itemValue="#{i}" itemLabel="#{i.descripcion}"
+								forceSelection="true" placeholder="ubicacion..."
+								emptyMessage="Sin resultados" converter="#{ubicacionConverter}"
+								scrollHeight="200">
+
+
+								<f:facet name="itemtip">
+									<h:panelGrid columns="2" cellpadding="5">
+										<h:outputText value="Estatus" />
+										<h:outputText value="#{i.estatus}" />
+									</h:panelGrid>
+								</f:facet>
+							</p:autoComplete>
+							<p:message for="ubica" />
+
+							<p:outputLabel for="@next" value="Estatus: " />
+							<p:selectBooleanCheckbox value="#{materiaMB.estatus}" />
+
+
+
+							<f:facet name="footer">
+
+								<p:commandButton value="Cancelar"
+									actionListener="#{materiaMB.cancelar}" process="@this"
+									oncomplete="PF('tbl').clearFilters(); PF('tbl').filter();"
+									update="principal" style="float:right;"
+									title="Cancelar Registro" />
+								<p:commandButton value="Guardar"
+									actionListener="#{materiaMB.guardar}" update="principal :msg"
+									style="float:right;" title="Guardar Registro" />
+
+							</f:facet>
+
+						</p:panelGrid>
+					</h:panelGrid>
+					<br />
+
+					<p:contextMenu for="tbl">
+						<p:menuitem value="Editar" update="principal"
+							icon="ui-icon-pencil" actionListener="#{materiaMB.editar}"
+							process="tbl,@this" />
+						<p:menuitem value="Eliminar" update="principal principal:tbl"
+							icon="ui-icon-close" actionListener="#{materiaMB.eliminar}"
+							process="tbl,@this">
+							<p:confirm header="Confirmación" message="Eliminar materia?"
+								icon="ui-icon-alert" />
+						</p:menuitem>
+					</p:contextMenu>
+
+					<p:dataTable id="tbl" widgetVar="tbl" value="#{materiaMB.lista}"
+						var="p" tableStyle="table-layout: auto;"
+						emptyMessage="Sin registros" paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+						selection="#{materiaMB.slcmateria}" selectionMode="single"
+						rowKey="#{p.id}" filteredValue="#{materiaMB.listaFilter}">
+
+						<f:facet name="header">Materia Registrados</f:facet>
+
+						<p:column headerText="Nombre" style="text-align:center;"
+							filterBy="#{p.descripcion}" filterMatchMode="contains">
+							<h:outputText value="#{p.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Cantidad" style="text-align:center;"
+							filterBy="#{p.cantidad}" filterMatchMode="contains">
+							<h:outputText value="#{p.cantidad}" />
+						</p:column>
+
+						<p:column headerText="Costo" style="text-align:center;"
+							filterBy="#{p.costoKilo}" filterMatchMode="contains">
+							<h:outputText value="#{p.costoKilo}" />
+						</p:column>
+
+						<p:column headerText="Proveedor" style="text-align:center;"
+							filterBy="#{p.catProveedor.descripcion}"
+							filterMatchMode="contains">
+							<h:outputText value="#{p.catProveedor.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Unidad de Medida" style="text-align:center;"
+							filterBy="#{p.catUnidadMedida.descripcion}"
+							filterMatchMode="contains">
+							<h:outputText value="#{p.catUnidadMedida.descripcion}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:form> </section>
+
+		</div>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode"
+			appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

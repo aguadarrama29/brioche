@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/10/2018 11:11:12 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.CatProveedor" table="cat_proveedor" schema="public" lazy="false">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="catMarca" class="com.panaderia.modelo.negocio.CatMarca" fetch="select">
+            <column name="id_marca" not-null="true" />
+        </many-to-one>
+        <property name="descripcion" type="string">
+            <column name="descripcion" not-null="true" />
+        </property>
+        <property name="estatus" type="boolean">
+            <column name="estatus" not-null="true" />
+        </property>
+        <property name="rfc" type="string">
+            <column name="rfc" length="40" />
+        </property>
+        <property name="direccion" type="string">
+            <column name="direccion" />
+        </property>
+        <property name="razonSocial" type="string">
+            <column name="razon_social" length="240" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="telefono" length="20" />
+        </property>
+        <property name="correo" type="string">
+            <column name="correo" length="150" />
+        </property>
+     <!--    <set name="ordenCompraVentas" table="orden_compra_venta" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_proveedor" not-null="true" />
+            </key>
+            <one-to-many class="com.panaderia.modelo.negocio.OrdenCompraVenta" />
+        </set>
+        <set name="catMateriaPrimas" table="cat_materia_prima" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_proveedor" not-null="true" />
+            </key>
+            <one-to-many class="com.panaderia.modelo.negocio.CatMateriaPrima" />
+        </set> -->
+    </class>
+</hibernate-mapping>

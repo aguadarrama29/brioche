@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 16-12-2022 11:11:12 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.RegistroEfectivo" table="registro_efectivo" schema="public" lazy="false">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        
+        <property name="descripcion" type="string">
+            <column name="descripcion"/>
+        </property>
+        <property name="monto" type="big_decimal">
+            <column name="monto" precision="10" not-null="false" />
+        </property>
+       
+        <property name="estatus" type="int">
+            <column name="estatus" not-null="true" />
+        </property>
+        
+        <property name="tipo" type="int">
+            <column name="tipo" not-null="true" />
+        </property>
+        
+         <property name="fecha" type="timestamp">
+            <column name="fecha" length="29" not-null="true" />
+        </property>
+        
+        <property name="idSucursal" type="int">
+            <column name="id_sucursal" not-null="true" />
+        </property>
+        
+        <many-to-one name="catUsuario" class="com.panaderia.modelo.negocio.CatUsuario" fetch="select">
+            <column name="id_usuario" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

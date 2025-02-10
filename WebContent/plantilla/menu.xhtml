@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<!-- Left side column. contains the logo and sidebar -->
+	<aside class="main-sidebar"> <!-- sidebar: style can be found in sidebar.less -->
+	<section class="sidebar"> <h:form>
+		<p:remoteCommand name="rc" actionListener="#{logout.logout()}"
+			oncomplete="window.close();" />
+	</h:form>
+
+	<ul class="sidebar-menu">
+		<li class="header">MENÚ</li>
+
+		<c:if test="#{login.usuario.catPerfil.id==2}">
+			<li><a
+				href="#{request.contextPath}/vistas/administrador/inicioAdminV2.xhtml">
+					<i class="fa fa-home"></i> <span>Inicio</span>
+			</a></li>
+		</c:if>
+
+		<c:if test="#{login.usuario.catPerfil.id==1}">
+			<li><a
+				href="#{request.contextPath}/vistas/usuario/inicioUsuario.xhtml"><i
+					class="fa fa-link"></i> <span>Inicio</span></a></li>
+		</c:if>
+
+
+
+		<c:if test="#{login.usuario.catPerfil.id==2}">
+			<li class="treeview"><a href="#"> <i class="fa fa-dashboard"></i>
+					<span>Administración</span> <i class="fa fa-angle-left pull-right"></i>
+			</a>
+				<ul class="treeview-menu">
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/listaInicial.xhtml"><i
+							class="fa fa-angle-double-right"></i> Lista Inicial</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/inventario.xhtml"><i
+							class="fa fa-angle-double-right"></i> Inventario</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/cliente.xhtml"><i
+							class="fa fa-angle-double-right"></i> Cliente</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/usuario.xhtml"><i
+							class="fa fa-angle-double-right"></i> Usuario</a></li>
+				</ul></li>
+
+
+			<li class="treeview"><a href="#"> <i
+					class="fa fa-bar-chart-o"></i> <span>Catalogos</span> <i
+					class="fa fa-angle-left pull-right"></i>
+			</a>
+				<ul class="treeview-menu">
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/tipoPan.xhtml"><i
+							class="fa fa-circle-o"></i> Tipo de Pan</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/materia.xhtml"><i
+							class="fa fa-circle-o"></i> Materia Prima</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/formula.xhtml"><i
+							class="fa fa-circle-o"></i>Formulas</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/marca.xhtml"><i
+							class="fa fa-circle-o"></i>Marcas</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/proveedor.xhtml"><i
+							class="fa fa-circle-o"></i> Proveedor</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/ubicacion.xhtml"><i
+							class="fa fa-circle-o"></i> Ubicación</a></li>
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/unidad.xhtml"><i
+							class="fa fa-circle-o"></i> Unidad Medida</a></li>
+
+					<!-- <li><a
+						href="#{request.contextPath}/vistas/administrador/venta2.xhtml"><i
+							class="fa fa-circle-o"></i> demo1</a></li> -->
+
+				</ul></li>
+		</c:if>
+
+
+		<li class="treeview"><a href="#"> <i class="fa fa-table"></i>
+				<span>Orden</span> <i class="fa fa-angle-left pull-right"></i></a> <c:if
+				test="#{login.usuario.catPerfil.id==2}">
+				<ul class="treeview-menu">
+					<li><a
+						href="#{request.contextPath}/vistas/administrador/ERPan.xhtml"><i
+							class="fa fa-angle-double-right"></i> Distribuir</a></li>
+					<!--<li><a href="#{request.contextPath}/vistas/usuario/listaPedidos.xhtml"><i class="fa fa-angle-double-right"></i> Pedidos</a></li>-->
+				</ul>
+			</c:if> <c:if test="#{login.usuario.catPerfil.id==1}">
+				<ul class="treeview-menu">
+					<li><a
+						href="#{request.contextPath}/vistas/usuario/ERPanSucursal.xhtml"><i
+							class="fa fa-angle-double-right"></i> Existencias</a></li>
+				</ul>
+			</c:if></li>
+
+		<li><a
+			href="#{request.contextPath}/vistas/usuario/registroDinero.xhtml">
+				<i class="fa fa-link"></i> <span>Mov. Efectivo</span>
+		</a></li>
+
+
+		<li class="treeview"><a href="#"> <i
+				class="menu-icon fa fa-newspaper-o"></i> <span>Corte</span> <i
+				class="fa fa-angle-left pull-right"></i>
+		</a>
+			<ul class="treeview-menu">
+
+				<c:if test="#{login.usuario.catPerfil.id==1}">
+					<li class="active"><a
+						href="#{request.contextPath}/vistas/usuario/ventaXUsuario.xhtml"><i
+							class="fa fa-circle-o"></i> Por Usuario</a></li>
+				</c:if>
+
+				<c:if test="#{login.usuario.catPerfil.id==2}">
+					<li class="active"><a
+						href="#{request.contextPath}/vistas/administrador/ventaXDia.xhtml"><i
+							class="fa fa-circle-o"></i> Cierre </a></li>
+				</c:if>
+			</ul></li>
+			
+			
+			<li class="treeview"><a href="#"> <i class="fa fa-table"></i>
+					<span>Pedidos</span> <i class="fa fa-angle-left pull-right"></i>
+			</a>
+				<ul class="treeview-menu">
+					<li><a
+						href="#{request.contextPath}/vistas/usuario/pedido.xhtml"><i
+							class="fa fa-angle-double-right"></i> Registrar</a></li>
+					<!-- <li><a
+						href="#{request.contextPath}/vistas/usuario/listaPedidos.xhtml"><i
+							class="fa fa-angle-double-right"></i> Pedidos</a></li> -->
+				</ul></li>
+
+		<!-- <li id="liR" class="treeview"><a href="#" > <i class="menu-icon fa fa-newspaper-o"></i> <span class="menu-text">
+							Reportesee </span> <b class="arrow fa fa-angle-down"></b>
+				</a> <b class="arrow"></b>
+
+					<ul class="treeview-menu">
+						
+
+							<li class="active"><h:commandLink id="ajax2" actionListener="#{reporteVentaMB.reporteXUsuarioCaja}" process="@this" target="_blank">
+									<i class="menu-icon fa fa-caret-right"></i>
+									<h:outputText value=" Guía Simple " />
+								</h:commandLink></li>
+
+								
+						
+							<li><h:commandLink id="ajax3" actionListener="#{reporteVentaMB.reporteXUsuarioCaja}" process="@this" target="_blank">
+									<i class="menu-icon fa fa-caret-right"></i>
+									<h:outputText value=" Reporte Pendientes " />
+								</h:commandLink></li>
+
+
+
+					</ul></li> -->
+
+
+		<!--es un menu directo al dar clic se va a la vista <li><a
+			href="#{request.contextPath}/vistas/administrador/observacionesExp.xhtml"><i
+				class="fa fa-check-circle-o"></i> <span>Observaciones</span></a></li> -->
+
+		<li><a href="#" onclick="rc();"><i class="fa fa-power-off"></i>
+				<span>Salir</span></a></li>
+
+	</ul>
+	<!-- /.sidebar-menu --> </section> <!-- /.sidebar --> </aside>
+
+</ui:composition>

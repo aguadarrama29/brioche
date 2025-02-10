@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 17/07/2019 12:39:28 PM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.CatTipoPan" table="cat_tipo_pan" schema="public" lazy="false">
+        <id name="codigo" type="string">
+            <column name="codigo" length="7" />
+            <generator class="assigned" />
+        </id>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="250" not-null="true" />
+        </property>
+        <property name="costo" type="double">
+            <column name="costo" scale="0" not-null="true" />
+        </property>
+        <property name="estatus" type="boolean">
+            <column name="estatus" not-null="true" />
+        </property>
+        <property name="comentario" type="string">
+            <column name="comentario" />
+        </property>
+         <property name="imagen" type="string">
+            <column name="imagen" />
+        </property>
+        <!-- <set name="panXSucursals" table="pan_x_sucursal" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="codigopan" length="7" not-null="true" />
+            </key>
+            <one-to-many class="com.panaderia.modelo.negocio.PanXSucursal" />
+        </set> -->
+    </class>
+</hibernate-mapping>

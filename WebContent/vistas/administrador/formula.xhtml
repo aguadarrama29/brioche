@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Catálogo de Formulas</ui:define>
+	<ui:define name="metadata" />
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				<small>Administración - Formulas</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-home"></i>Catálogo de
+						Formulas</a></li>
+			</ol>
+			</section>
+			<p:messages autoUpdate="true" id="msgs" showSummary="true"
+				showDetail="true" closable="true" />
+			<section class="content"> <p:growl id="msg"
+				showDetail="true" autoUpdate="true" /> <p:messages id="msgTop"
+				showDetail="true" autoUpdate="true" closable="true" /> <h:form
+				id="principal">
+
+				<p:panel style="width:100%;">
+
+					<p:panelGrid columns="3">
+
+						<f:facet name="header">Formula:</f:facet>
+
+						<p:outputLabel for="nombre" value="Nombre:"
+							style="font-weight:bold;" />
+						<p:inputText id="nombre" value="#{formulaMB.formula.descripcion}"
+							required="true" requiredMessage="Debe ingresar un nombre." />
+						<p:message for="nombre" />
+
+
+						<f:facet name="footer">
+
+							<p:commandButton value="Cancelar"
+								actionListener="#{formulaMB.cancelar}"
+								oncomplete="PF('tbl').clearFilters(); PF('tbl').filter();"
+								update="principal" style="float:right;"
+								title="Cancelar Registro" />
+							<p:commandButton value="Guardar"
+								actionListener="#{formulaMB.guardar}" update="principal"
+								style="float:right;" title="Guardar Registro" />
+
+						</f:facet>
+
+					</p:panelGrid>
+
+					<br />
+
+					<p:contextMenu for="tbl">
+						<p:menuitem value="Editar" update="principal"
+							icon="ui-icon-pencil" actionListener="#{formulaMB.editar}"
+							process="tbl,@this" />
+						<p:menuitem value="Ingredientes" update="principal"
+							icon="ui-icon-cart" actionListener="#{formulaMB.editar}"
+							process="tbl,@this" onclick="PF('dlgIngrediente').show();" />
+						<p:menuitem value="Eliminar" update="principal principal:tbl"
+							icon="ui-icon-close" actionListener="#{formulaMB.eliminar}"
+							process="tbl,@this">
+							<p:confirm header="Confirmación" message="Eliminar Formula?"
+								icon="ui-icon-alert" />
+						</p:menuitem>
+					</p:contextMenu>
+
+					<p:dataTable id="tbl" widgetVar="tbl" value="#{formulaMB.lista}"
+						var="p" tableStyle="table-layout: auto;"
+						emptyMessage="Sin registros" paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+						selection="#{formulaMB.slcformula}" selectionMode="single"
+						rowKey="#{p.id}" filteredValue="#{formulaMB.listaFilter}">
+
+						<f:facet name="header">Formulas Registrados</f:facet>
+
+						<p:column headerText="Nombre" style="text-align:center;"
+							filterBy="#{p.descripcion}" filterMatchMode="contains">
+							<h:outputText value="#{p.descripcion}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:form> </section>
+
+		</div>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode"
+			appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+
+
+		<p:dialog appendTo="@(body)" dynamic="true" showEffect="scale"
+			hideEffect="clip" header="Ingredientes (Formulas 1 Kilogramo)"
+			widgetVar="dlgIngrediente" id="dlgIngrediente" width="700"
+			height="500" modal="true">
+			<h:form id="formIngre">
+
+
+				<p:panelGrid columns="1" style="width: 100%">
+
+					<h:panelGrid columns="2">
+
+						<p:panelGrid columns="1">
+							<f:facet name="header">Ingredientes *</f:facet>
+							<p:autoComplete id="materia" size="50" queryDelay="2000"
+								queryDeletionDelay="1000" value="#{formulaMB.catMateriaPrima}"
+								completeMethod="#{formulaMB.completeMateria}" var="i"
+								itemValue="#{i}" itemLabel="#{i.descripcion}"
+								forceSelection="true" placeholder="Materia prima..."
+								emptyMessage="Sin resultados" converter="#{materiaConverter}"
+								scrollHeight="200" required="true"
+								requiredMessage="Debe ingresar un ingrediente."
+								disabled="#{!formulaMB.bandera}">
+
+
+								<f:facet name="itemtip">
+									<h:panelGrid columns="2" cellpadding="1">
+										<h:outputText value="cantidad:" />
+										<h:outputText value="#{i.cantidad}" />
+									</h:panelGrid>
+								</f:facet>
+							</p:autoComplete>
+							<p:message for="materia" />
+						</p:panelGrid>
+
+						<p:panelGrid columns="1">
+							<f:facet name="header">Cantidad *</f:facet>
+							<p:inputText id="costo" value="#{formulaMB.cantidadMP}"
+								required="true" requiredMessage="Debe ingresar un cantidad."
+								readonly="false" />
+							<p:message for="costo" />
+						</p:panelGrid>
+
+					</h:panelGrid>
+
+					<p:contextMenu for="tblIngre">
+						<p:menuitem value="Editar"
+							update="principal formIngre:costo formIngre:materia"
+							icon="ui-icon-pencil" actionListener="#{formulaMB.editarMateria}"
+							process="tblIngre,@this" />
+						<p:menuitem value="Eliminar" update="principal formIngre:tblIngre"
+							icon="ui-icon-close"
+							actionListener="#{formulaMB.eliminarMateria}"
+							process="tblIngre,@this">
+							<p:confirm header="Confirmación" message="Eliminar Formula?"
+								icon="ui-icon-alert" />
+						</p:menuitem>
+					</p:contextMenu>
+
+					<p:dataTable id="tblIngre" widgetVar="tblIngre"
+						value="#{formulaMB.listaMPF}" var="p"
+						tableStyle="table-layout: auto;" emptyMessage="Sin registros"
+						paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+						selection="#{formulaMB.slcmateria}" selectionMode="single"
+						rowKey="#{p.id}" filteredValue="#{formulaMB.listaFilterMPF}">
+
+						<f:facet name="header">Ingredientes Por formula</f:facet>
+
+						<p:column headerText="Nombre" style="text-align:center;"
+							filterBy="#{p.id.idFormula}" filterMatchMode="contains">
+							<h:outputText
+								value="#{formulaMB.cargaMateriaPri(p.id.idMateria).descripcion}" />
+						</p:column>
+
+						<p:column headerText="Cantidad" style="text-align:center;"
+							filterBy="#{p.cantidadMatPrima}" filterMatchMode="contains">
+							<h:outputText value="#{p.cantidadMatPrima}" />
+						</p:column>
+
+						<p:column headerText="Unidad Medida" style="text-align:center;"
+							filterBy="#{p.unidadMedidaDes}" filterMatchMode="contains">
+							<h:outputText value="#{p.unidadMedidaDes}" />
+						</p:column>
+
+					</p:dataTable>
+				</p:panelGrid>
+
+
+				<p:toolbar>
+
+					<f:facet name="right">
+
+						<p:commandButton process="@this" value="Cerrar"
+							onclick="PF('dlgIngrediente').hide()" icon="ui-icon-close"
+							actionListener="#{formulaMB.cancelar}" update="@form" />
+
+						<p:commandButton value="Aceptar"
+							actionListener="#{formulaMB.guardarIngrediente}"
+							update="@form :msg" icon="ui-icon-check"
+							oncomplete="if (!args.validationFailed){}" />
+
+						<!--oncomplete="if (!args.validationFailed){PF('dlgIngrediente').hide()}" -->
+
+					</f:facet>
+
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+	</ui:define>
+</ui:composition>
+

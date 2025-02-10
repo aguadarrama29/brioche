@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 24/07/2021 11:32:47 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+	<class name="com.panaderia.modelo.negocio.CatEstatusPedido"
+		table="cat_estatus_pedido" schema="public" lazy="false">
+		<id name="id" type="int">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="descripcion" type="string">
+			<column name="descripcion" length="180" />
+		</property>
+		<!-- <set name="pedidos" table="pedido" inverse="true" lazy="true" fetch="select"> 
+			<key> <column name="id_estatus_pedido" /> </key> <one-to-many class="com.negocio.Pedido" 
+			/> </set> -->
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Pedidos</ui:define>
+	<ui:define name="metadata"/>
+
+	<ui:define name="content">
+	<div class="content-wrapper">
+	
+		<section class="content-header">
+		<h1>
+			<small>Registro - Pedidos</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-home"></i>Administración</a></li>
+		</ol>
+		</section>
+		<p:messages autoUpdate="true" id="msg" showSummary="true" showDetail="true" closable="true" />
+		<section class="content"> <h:form id="principal">
+
+			<p:panel style="width:100%;">
+			<p:panelGrid columns="3">
+					<h:panelGrid columns="3" cellpadding="2">
+						<p:outputLabel for="mes" value="Mes:" style="font-weight:bold;" />
+						<p:inputText id="mes" value="#{pedidoMB.mes}" />
+						<p:message for="mes" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="3" cellpadding="2">
+						<p:outputLabel for="dia" value="Día:" style="font-weight:bold;" />
+						<p:inputText id="dia" value="#{pedidoMB.dia}" />
+						<p:message for="dia" />
+					</h:panelGrid>
+				</p:panelGrid>
+				<br />					
+				<p:panelGrid columns="1" style="width:100%;">
+					<f:facet name="header">
+					
+						<p:commandButton value="Consultar" icon="ui-icon-circle-zoomin"
+								actionListener="#{pedidoMB.obtenerEventos}" update=" tbl :msg" 
+								title="Consultar" style="float:right !important;margin:2px 2px 3px 2px;" />
+								
+						<p:commandButton value="Cancelar"
+							actionListener="#{pedidoMB.limpiar}" update="principal" icon="ui-icon-cancel"
+							style="float:right !important;margin:2px 2px 3px 2px;" title="Cancelar Registro"/>
+							
+						<p:commandButton value="Nuevo" icon="ui-icon-person" action="#{pedidoMB.agregar}"
+							oncomplete="PF('dlgAddC').show()"  process="@this" style="float:right !important;margin:2px 2px 3px 2px;"
+							title="Nuevo Pedido" global="false" update="formCP"/>
+						
+
+						<p:commandButton value="Exportar" onclick="form.target='_blank'" ajax="false" update=":msg"
+							actionListener="#{pedidoMB.exportarContacto}" global="false" process="@this" rendered="false"
+							style="float:right !important;margin:2px 2px 3px 2px;" icon="ui-icon-note" iconPos="right" />
+
+						<p:commandButton value="Imprimir" onclick="form.target='_blank'" ajax="false" id="imprimi"
+							actionListener="#{pedidoMB.imprimirContactos}"  global="false" process="imprimi" rendered="false"
+							style="float:right !important;margin:2px 2px 3px 2px;" icon="ui-icon-print" iconPos="right" />
+
+					</f:facet>
+				</p:panelGrid>
+				<p:dataTable id="tbl" widgetVar="tbl" value="#{pedidoMB.pedidos}" var="p" tableStyle="table-layout: auto;" emptyMessage="Sin registros"
+					paginator="true" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+					rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"   rowKey="#{p.folio}" filteredValue="#{onomasticoMB.listaFilter}"
+					rowStyleClass="#{(pedidoMB.mostrarPR(p.fecInicio) eq 1 ? 'tipoVerde':(pedidoMB.mostrarPR(p.fecInicio)  eq  2 
+						? 'tipoAmarillo' : (pedidoMB.mostrarPR(p.fecInicio) eq  3 ? 'tipoNaranja' : 
+						(pedidoMB.mostrarPR(p.fecInicio) eq  4 ? 'tipoRojo' : 'tipoRojo'))))}" >
+					
+					
+					<p:column headerText="Operaciones" style="text-align:center;"
+						width="100">
+						<p:menuButton value="Menú">							
+							<p:menuitem action="#{pedidoMB.editar(p)}" icon="ui-icon-pencil" title="Editar" 
+								value="Editar"  oncomplete="PF('dlgAddC').show()"
+								update="formCP"/>
+								
+							<p:menuitem action="#{pedidoMB.agregarProducto(p)}" icon="ui-icon-script" title="Articulos" 
+								value="Tipo Pan"  oncomplete="PF('dlgAddArti').show()"
+								update="formArti"/>
+								
+							<p:menuitem value="Nota" onclick="principal.target='_blank'"
+								action="#{pedidoMB.mostrarNota(p)}" icon="ui-icon-note" style="width: 140px;"
+								process=":principal" ajax="false"  />
+								
+							<p:menuitem value="Mapa" update="@form"
+								icon="	ui-icon-tag" actionListener="#{pedidoMB.MapaCoor(p)}"
+								process="tbl,@this" />
+						</p:menuButton>
+					</p:column>
+					
+					
+					<p:column headerText="Folio" style="text-align:center;"
+						filterBy="#{p.folio}" filterMatchMode="contains">
+						<h:outputText value="#{p.folio}" />
+					</p:column>
+					
+					<p:column headerText="Nombre" style="text-align:center;" filterBy="#{p.nombre} #{p.ape1}  #{p.ape2}" 
+						filterMatchMode="contains">
+						<h:outputText value="#{p.nombre}  #{p.ape1}  #{p.ape2}" />
+					</p:column>
+					
+					<p:column headerText="Hora Inicio" style="text-align:center;"
+							sortBy="#{p.horaI}" filterMatchMode="contains">
+							<h:outputText value="#{p.horaI}">
+							</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Hora Fin" style="text-align:center;"
+							sortBy="#{p.horaF}" filterMatchMode="contains">
+							<h:outputText value="#{p.horaF}">
+							</h:outputText>
+					</p:column>	
+					
+					<p:column headerText="Total" style="text-align:center;">
+						<h:outputText value="#{p.total}" />
+					</p:column>
+					
+					<p:column headerText="A cuenta" style="text-align:center;">
+						<h:outputText value="#{p.ACuenta}" />
+					</p:column>
+					
+					<p:column headerText="Resta" style="text-align:center;">
+						<h:outputText value="#{pedidoMB.obtenerFaltante(p)}" />
+					</p:column>
+					
+
+				</p:dataTable>
+
+			</p:panel>
+			
+			<p:panel rendered="#{pedidoMB.verMapa gt 0}">
+			<div class="card" id="mapaG" > 
+			    <p:gmap center="#{pedidoMB.pedido.coordenada}" zoom="15" type="HYBRID" style="width:100%;height:400px" streetView="true"/>
+			</div>
+			</p:panel>
+
+		</h:form> </section>
+		</div>
+		
+		<p:dialog header="Agregar/Editar" appendTo="@(body)" dynamic="true" showEffect="scale" hideEffect="clip" 
+			modal="true" resizable="true" widgetVar="dlgAddC" id="dlgAddC" styleClass="autoWidthDialog">
+			<h:form id="formCP">
+
+				<p:panelGrid columns="1" id="infoColC" style="width:100%;">
+					
+					<p:panel id="perso" header="Datos personales y del Evento" style="width:100%;">
+						<h:panelGrid columns="9" cellpadding="3">
+							<p:outputLabel  value="Folio: #{pedidoMB.pedido.folio}"
+								style="font-weight:bold;" /> 
+							
+							<p:outputLabel for="cli" value="Cliente" style="font-weight:bold;" />
+							<p:selectOneMenu id="cli"  value="#{pedidoMB.idCliente}" 
+								required="true" requiredMessage="Debe seleccionar una Coordinación">  
+								<p:ajax event="change" update="infoColC" listener="#{pedidoMB.cargaDatos}" />
+								<f:selectItem itemLabel="Seleccionar..."   noSelectionOption="true" />
+								<f:selectItems value="#{pedidoMB.listaClientes}" itemLabel="#{u.descripcion}" itemValue="#{u.id}" var="u" />
+							</p:selectOneMenu>
+							<p:message for="cli" />
+							
+							<p:outputLabel for="nombre" value="Nombre:"
+								style="font-weight:bold;" /> 
+							<p:inputText id="nombre" value="#{pedidoMB.pedido.nombre}"
+								style="width:150px;margin-left:-4px;" required="true"
+								requiredMessage="Es necesario capturar el nombre." />
+							<p:message for="nombre" />
+						</h:panelGrid>
+						
+						<h:panelGrid columns="6" cellpadding="3">
+								<p:outputLabel for="ape1" value="Primer Apellido"
+									style="font-weight:bold;" />
+								<p:inputText id="ape1" value="#{pedidoMB.pedido.ape1}"
+									style="width:150px;margin-left:-4px;" required="true"
+									requiredMessage="Es necesario capturar el primer apellido." />
+								<p:message for="ape1" />
+								
+								<p:outputLabel for="ape2" value="Segundo Apellido:"
+									style="font-weight:bold;" />
+								<p:inputText id="ape2" value="#{pedidoMB.pedido.ape2}"
+									style="width:150px;margin-left:-4px;" required="true"
+									requiredMessage="Es necesario capturar el segundo apellido."/>
+								<p:message for="ape2" />	
+						</h:panelGrid>
+						
+						
+						<h:panelGrid columns="12" cellpadding="3">
+						<p:outputLabel for="fechaE" value="Fecha entrega" style="font-weight:bold;" />
+							<p:calendar id="fechaE"
+								value="#{pedidoMB.pedido.fecInicio}" locale="es"
+								pattern="dd-MM-yyyy" 
+								required="true" yearRange="c-90:c+60" navigator="true"
+								requiredMessage="Es necesario capturar una fecha de Pedido" >
+								
+							</p:calendar>
+							<p:message for="fechaE" />
+							
+							<p:outputLabel for="hi" value="Inicio Evento" style="font-weight:bold;" />
+							<p:inputMask id="hi" value="#{pedidoMB.pedido.horaI}" maxlength="5"
+								style="width:150px;margin-left:-4px;" required="true"
+								requiredMessage="Es necesario capturar hora de inicio." 
+								mask="99:99" validateMask="true"/>
+							<p:message for="hi" />
+                			
+                			<p:outputLabel for="hif" value="Fin Evento" style="font-weight:bold;" />
+							<p:inputMask id="hif" value="#{pedidoMB.pedido.horaF}"
+								style="width:150px;margin-left:-4px;" required="true" maxlength="5"
+								requiredMessage="Es necesario capturar hora en que termina el evento" 
+								mask="99:99" validateMask="true"/>								
+							<p:message for="hif" />
+																        
+					    </h:panelGrid>
+					    
+					</p:panel>
+					
+					
+					<p:panel id="basic" header="Datos para Localizar" style="width:100%;">
+						<h:panelGrid columns="9" cellpadding="3">
+							<p:outputLabel for="domi" value="Domicilio"
+								style="font-weight:bold;" />
+							<p:inputText id="domi" value="#{pedidoMB.pedido.domicilio}"
+								style="width:250px;margin-left:-4px;" readonly="false" required="true"
+								requiredMessage="Debe seleccionar un Domicilio"/>
+							<p:message for="domi" />	
+							
+							<p:outputLabel for="telefono" value="Teléfono:"
+								style="font-weight:bold;" />
+							<p:inputMask id="telefono" value="#{pedidoMB.pedido.telefono}"
+								style="width:100px;margin-left:-4px;" 
+								required="true" mask="9999999999"/>
+							<p:message for="telefono" />
+							
+							<p:outputLabel for="est" value="Estatus" style="font-weight:bold;" />
+							<p:selectOneMenu id="est"  value="#{pedidoMB.idCatEstPedido}" 
+								required="true" requiredMessage="Debe seleccionar un Estatus" disabled="#{pedidoMB.accion == 1}"> 
+								<f:selectItem itemLabel="Seleccionar..."  noSelectionOption="true" />
+								<f:selectItems value="#{pedidoMB.estatus}" itemLabel="#{ue.descripcion}" itemValue="#{ue.id}" var="ue" />
+							</p:selectOneMenu>
+							<p:message for="est" />
+						</h:panelGrid>	
+						
+						<p:outputLabel for="coor" value="Coordenadas:"
+							style="font-weight:bold;" />
+						<p:inputText id="coor" value="#{pedidoMB.pedido.coordenada}"
+							style="width:250px;margin-left:-4px;" readonly="false" required="true"
+							requiredMessage="Debe ingresar las coordenadas del evento"/>
+						<p:message for="coor" />
+												
+					</p:panel>
+					
+					<h:panelGrid columns="12" cellpadding="3">
+							<p:outputLabel for="des" value="Comentarios:"
+								style="font-weight:bold;" />
+							<p:inputTextarea id="des" value="#{pedidoMB.pedido.comentario}" 
+								 rows="4" cols="100" required="true" style="resize: none;"
+								 requiredMessage="Es necesario capturar la solicitud" />
+							<p:message for="des" />				
+					    </h:panelGrid>
+					
+				</p:panelGrid>
+
+				<p:toolbar>
+					<f:facet name="right">
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							onclick="PF('dlgAddC').hide()" process="@this"
+							actionListener="#{pedidoMB.cancelar}" update="@form :msg  :principal"  />
+
+						<p:commandButton value="Guardar" icon="ui-icon-check"
+							actionListener="#{pedidoMB.guardar}" update="@form :msg :principal :principal:tbl" 
+							oncomplete="if (!args.validationFailed){PF('dlgAddC').hide()}"/>
+					</f:facet>
+				</p:toolbar>
+			</h:form>
+
+		</p:dialog>
+		
+		<p:dialog header="Agregar/Editar"  appendTo="@(body)" dynamic="true" showEffect="scale" hideEffect="clip" 
+			modal="true" resizable="true" widgetVar="dlgAddArti" id="dlgAddArti" styleClass="autoWidthDialog">
+			<h:form id="formArti">
+			<section>
+				<h1>Total:
+					<h:outputText value="#{pedidoMB.total}" id="totalGen" /></h1>
+			</section>
+
+				<p:panelGrid columns="1" id="infoPro" style="width:100%;" >
+					
+					<p:panel  header="Datos personales y del Evento  #{pedidoMB.pedido.folio}" style="width:100%;" rendered="false">
+						<h:panelGrid columns="2" cellpadding="3">
+							<p:outputLabel  value="Folio: #{pedidoMB.pedido.folio}"
+								style="font-weight:bold;" /> 
+							
+							<p:outputLabel style="font-weight:bold;"
+								value="Cliente: #{pedidoMB.pedido.nombre}  #{pedidoMB.pedido.ape1} 
+								   #{pedidoMB.pedido.ape2}"/> 
+							
+						</h:panelGrid>
+						
+						<h:panelGrid columns="4" cellpadding="3">
+							<p:outputLabel  style="font-weight:bold;"
+								value="Fecha Inicio: #{pedidoMB.pedido.fecInicio}"  locale="es" pattern="dd-MM-yyyy" /> 
+							
+							<p:outputLabel  style="font-weight:bold;"
+								value="Fecha Fin: #{pedidoMB.pedido.fecFin}"  locale="es" pattern="dd-MM-yyyy" /> 							
+							
+							<p:outputLabel  value="Teléfono: #{pedidoMB.pedido.telefono}"
+								style="font-weight:bold;" />									        
+					    </h:panelGrid>
+					    
+					    <h:panelGrid columns="1" cellpadding="3">
+					    	<p:outputLabel  value="Domicilio: #{pedidoMB.pedido.domicilio}"
+								style="font-weight:bold;" />
+					    </h:panelGrid>
+					    
+					</p:panel>
+					
+					
+					<p:panel header="Tipo Pan" style="width:100%;">
+						
+						<h:panelGrid columns="6">
+							<p:outputLabel for="proDes" value="Producto:"
+								style="font-weight:bold;" />
+							<p:autoComplete id="proDes" size="40" queryDelay="2000"
+								queryDeletionDelay="1000" value="#{pedidoMB.articulo}"
+								completeMethod="#{pedidoMB.completeArticulosDes}" var="i"
+								itemValue="#{i}" itemLabel="#{i.descripcion}" forceSelection="true"
+								placeholder="Descripción..." emptyMessage="Sin resultados"
+								converter="#{tipoPanConverter}" scrollHeight="200">
+		
+								<f:facet name="itemtip">
+									<h:panelGrid columns="1" cellpadding="10">		
+										<h:outputText value="Existencia: #{i.costo}" />
+										<h:outputText value="Descripción: #{i.descripcion}" />
+									</h:panelGrid>
+								</f:facet>
+								<p:ajax event="itemSelect" listener="#{pedidoMB.elegirArticulo}" 
+									 oncomplete="PF('dlgCantidad').show()" update=":msg @form formArti :formCantidad" />
+							</p:autoComplete>
+							<p:message for="proDes" />						
+						</h:panelGrid>	
+						
+						<p:dataTable id="tblAPe" widgetVar="tblAPe" value="#{pedidoMB.artPedido}" var="artp" tableStyle="table-layout: auto;" emptyMessage="Sin registros"
+						paginator="true" rows="10" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"   rowKey="#{artp.id}">
+						
+						
+						<p:column headerText="Operaciones" style="text-align:center;" width="100">
+							
+							<p:commandButton icon="ui-icon-trash" actionListener="#{pedidoMB.eliminarAP(artp)}" process="@this" 
+								title="Eliminar" update="tblAPe formArti:totalGen">
+								<p:confirm header="Confirmación" message="Desea Eliminar el Contacto?" icon="ui-icon-alert" />
+							</p:commandButton>
+						
+						</p:column>
+						
+						<p:column headerText="Codigo" style="text-align:center;" filterBy="#{artp.catTipoPan.codigo}" 
+							filterMatchMode="contains">
+							<h:outputText value="#{artp.catTipoPan.codigo}" />
+						</p:column>
+						
+						<p:column headerText="Descripción" style="text-align:center;" filterBy="#{artp.catTipoPan.descripcion}" 
+							filterMatchMode="contains">
+							<h:outputText value="#{artp.catTipoPan.descripcion}" />
+						</p:column>
+						
+						<p:column headerText="Costo" style="text-align:center;">
+							<h:outputText value="#{artp.catTipoPan.costo}" />
+						</p:column>
+						
+						<p:column headerText="Cantidad" style="text-align:center;" filterBy="#{artp.cantidad}" 
+							filterMatchMode="contains">
+							<h:outputText value="#{artp.cantidad}" />
+						</p:column>
+	
+					</p:dataTable>	
+									
+					</p:panel>					
+				</p:panelGrid>
+
+				<p:toolbar>
+					<f:facet name="right">
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							onclick="PF('dlgAddArti').hide()" process="@this"
+							actionListener="#{pedidoMB.cancelar}" update="@form :msg  :principal"  />
+
+						<p:commandButton value="Guardar" icon="ui-icon-check"
+							 update="formImporte" oncomplete="PF('dlgImporte').show()"/>
+					</f:facet>
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+		
+		<p:dialog header="Cantidad"  appendTo="@(body)" dynamic="true" showEffect="scale" hideEffect="clip" 
+			modal="true" resizable="true" widgetVar="dlgCantidad" id="dlgCantidad" styleClass="autoWidthDialog">
+			<h:form id="formCantidad">
+
+				<p:panelGrid columns="1" style="width:100%;" >				
+					<p:outputLabel for="can" value="Cantidad: "
+						style="font-weight:bold;" />
+					<p:inputText id="can" value="#{pedidoMB.cantidad}"
+						style="width:250px;margin-left:-4px;" readonly="false" required="true"
+						requiredMessage="Debe seleccionar una Cantidad"/>
+					<p:message for="can" />										
+				</p:panelGrid>
+
+				<p:toolbar>
+					<f:facet name="right">
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							onclick="PF('dlgCantidad').hide()" process="@this"
+							actionListener="#{pedidoMB.cancelar}" update="@form :msg  :principal"  />
+
+						<p:commandButton value="Guardar" icon="ui-icon-check"
+							actionListener="#{pedidoMB.agregarArticulo}" update="@form :msg :formArti" 
+							oncomplete="if (!args.validationFailed){PF('dlgCantidad').hide()}"/>
+					</f:facet>
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+		
+		<p:dialog header="Totales"  appendTo="@(body)" dynamic="true" showEffect="scale" hideEffect="clip" 
+			modal="true" resizable="true" widgetVar="dlgImporte" id="dlgImporte" styleClass="autoWidthDialog">
+			<h:form id="formImporte">
+
+				<p:panelGrid columns="1" style="width:100%;" >	
+					<p:outputLabel  value="Total: #{pedidoMB.total}"
+						style="font-weight:bold;" />
+									
+					<p:outputLabel for="acuen" value="A cuenta: "
+						style="font-weight:bold;" />
+					<p:inputText id="acuen" value="#{pedidoMB.pedido.ACuenta}"
+						style="width:250px;margin-left:-4px;" readonly="false" required="true"
+						requiredMessage="Debe seleccionar una Cantidad"/>
+					<p:message for="acuen" />										
+				</p:panelGrid>
+
+				<p:toolbar>
+					<f:facet name="right">
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							onclick="PF('dlgImporte').hide()" process="@this"
+							actionListener="#{pedidoMB.cancelar}" update="@form :msg  :principal"  />
+
+						<p:commandButton value="Guardar" icon="ui-icon-check"
+							actionListener="#{pedidoMB.guardarTotales}" update="@form :msg :formArti :principal:tbl :principal" 
+							oncomplete="if (!args.validationFailed){PF('dlgImporte').hide();PF('dlgAddArti').hide()}"/>
+					</f:facet>
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode" appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

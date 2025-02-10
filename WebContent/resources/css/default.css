@@ -1,0 +1,49 @@
+.ui-widget {
+	font-size: 90% !important;
+}
+
+.ui-growl {
+	margin-top: 6%;
+}
+
+.login {
+	width: 280px;
+	height: 200px;
+	position: absolute;
+	left: 39%;
+	top: 50%;
+	margin: -150px 0 0 -150px;
+}
+
+.panelGridNoBorderTd td {
+	border: none !important;
+}
+
+.alignTop td {
+	vertical-align: top;
+}
+
+/* Login Page ================================== background-color: #3f95ad;*/
+.login-page {
+	background-image: url("#{resource['images/fondo.jpg']}");
+	background-position: center center;
+	background-attachment: fixed;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+.value {
+	font-weight: bold;
+}
+
+.ui-carousel {
+	margin-bottom: 20px;
+}
+
+.botonPieza{
+	background:#006dcc !important;
+	border: 2px solid #999 !important;
+	color:#ffffff !important;
+	text-shadow: 0 -1px 0 rgb(0 0 0 / 25%) !important;
+}

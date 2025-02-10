@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 1/04/2018 10:28:59 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.CatCliente" table="cat_cliente" schema="public" lazy="false">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="250" not-null="true" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="telefono" length="250" />
+        </property>
+        <property name="correo" type="string">
+            <column name="correo" length="250" />
+        </property>
+        <property name="direccion" type="string">
+            <column name="direccion" />
+        </property>
+        <property name="rfc" type="string">
+            <column name="rfc" length="100" />
+        </property>
+    </class>
+</hibernate-mapping>

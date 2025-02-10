@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="articulosPedido" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="647e807c-dc82-4817-9cd2-d522c15c3e32">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="folioArticulo" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select ap.*,art.descripcion as desArticulo,
+art.costo as precioArt
+from articulo_pedido as ap
+inner join cat_tipo_pan as art ON art.codigo=ap.codigo
+where folio=$P{folioArticulo}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="folio" class="java.lang.String"/>
+	<field name="cantidad" class="java.math.BigDecimal"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="desarticulo" class="java.lang.String"/>
+	<field name="precioart" class="java.math.BigDecimal"/>
+	<variable name="importe" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{cantidad}.multiply($F{precioart})]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="93" height="20" uuid="f93d9244-f5bc-453d-9809-ae5b8c4012fc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="93" y="0" width="249" height="20" uuid="113fc6d1-ef1d-41cd-bf95-8a5e502e7d98"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desarticulo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="342" y="0" width="93" height="20" uuid="0912fc62-6cd5-4244-bcf4-560c3913d0e5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precioart}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="435" y="0" width="93" height="20" uuid="fc143be7-1a83-4575-a5df-56dbcecae4df"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{importe}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

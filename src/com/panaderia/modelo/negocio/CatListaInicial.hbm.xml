@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 17/07/2019 12:39:28 PM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.CatListaInicial" table="cat_lista_inicial" schema="public" lazy="false">
+        <composite-id name="id" class="com.panaderia.modelo.negocio.CatListaInicialId">
+            <key-property name="codigopan" type="string">
+                <column name="codigopan" length="20" />
+            </key-property>
+            <key-property name="idUbicacion" type="int">
+                <column name="id_ubicacion" />
+            </key-property>
+        </composite-id>
+        
+       
+        <property name="cantidad" type="int">
+            <column name="cantidad" not-null="true" />
+        </property>
+      
+        <property name="comentario" type="string">
+            <column name="comentario" />
+        </property>
+         <property name="estatus" type="int">
+            <column name="estatus" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

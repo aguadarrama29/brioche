@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputText value="#{msg.nombre}-Acceso" /></title>
+	<h:outputStylesheet name="css/default.css" />
+	<h:outputScript name="js/md5.js" />
+	<h:outputScript name="js/passwd_md5.js" />
+	<link rel="shortcut icon" type="image/x-icon" href="#{resource['images/favicon.ico']}" />
+</h:head>
+
+<h:body styleClass="login-page">
+	<div class="login">
+
+		<h:panelGrid columns="2">
+
+			<p:graphicImage url="#{resource['images/logoPana.png']}" width="290" height="270" style="padding-left: 0px; padding-bottom: 10px" rendered="false"/>
+			<p:fieldset style="width: 250px; border: 3px solid #dfd9c3;" legend="Brioche - Acceso">
+				<h:form id="login_form" style="alignment-adjust: central; text-align: center;">
+					<p:focus context="login" />
+
+					<h:panelGrid id="login" columns="2" style="text-align: right; width: 100%;">
+						<p:outputLabel for="usuario" value="Usuario:" style="font-weight:bold; " />
+						<p:inputText id="usuario" value="#{login.usuario.descripcion}" required="true" requiredMessage="Necesita ingresar un Usuario" />
+
+						<p:outputLabel for="password" value="Contraseña:" style="font-weight:bold;" />
+						<p:password id="password" value="#{login.usuario.contrasenia}" required="true" requiredMessage="Necesita ingresar una Contraseña" />
+
+					</h:panelGrid>
+
+					<br />
+
+					<p:toolbar style="width: 97%;">
+						<f:facet name="right">
+							<p:commandButton type="reset" value="Cancelar" style="margin-right:60px;" />
+							<p:commandButton id="submit" onclick="passwd_md5();" value="Ingresar" action="#{login.doLogin}" ajax="false" style="margin-right:20px" />
+						</f:facet>
+					</p:toolbar>
+
+					<p:messages id="mensajes" showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
+				</h:form>
+			</p:fieldset>
+
+		</h:panelGrid>
+
+
+
+	</div>
+
+</h:body>
+</html>

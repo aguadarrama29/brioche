@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+		<!-- Mapas de los pojos -->
+		<mapping resource="/com/panaderia/modelo/negocio/CatFormula.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatMarca.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatMateriaPrima.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatPerfil.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatProveedor.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatUbicacion.hbm.xml" />	
+		<mapping resource="/com/panaderia/modelo/negocio/CatCliente.hbm.xml" />		
+		<mapping resource="/com/panaderia/modelo/negocio/CatUnidadMedida.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatUsuario.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/Masa.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/MateriaFormula.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/MatPrimaOrden.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/OrdenCompraVenta.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatTipoPan.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/PanXSucursal.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/RegistroVenta.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/RegistroEfectivo.hbm.xml" />
+		
+		<mapping resource="/com/panaderia/modelo/negocio/ArticuloPedido.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatEstatusPedido.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/Pedido.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/CatListaInicial.hbm.xml" />
+		
+		
+		<mapping resource="/com/panaderia/modelo/negocio/PrecioCantidadSucursal.hbm.xml" />
+		<mapping resource="/com/panaderia/modelo/negocio/PrecioCantidadVenta.hbm.xml" />
+		
+		
+		
+		<!-- /Mapas de los pojos -->
+
+	</session-factory>
+</hibernate-configuration>

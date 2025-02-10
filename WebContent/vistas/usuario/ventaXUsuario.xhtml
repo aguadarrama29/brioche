@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Reporte Venta Por Usuario</ui:define>
+	<ui:define name="metadata"/>
+
+	<ui:define name="content">
+	<div class="content-wrapper"> 
+		<section class="content-header">
+		<h1>
+			<small>Reporte - Venta Por Usuario</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-home"></i>Reporte Venta Por Usuario</a></li>
+		</ol>
+		</section>
+		<p:messages autoUpdate="true" id="msgs" showSummary="true" showDetail="true" closable="true" />
+		<section class="content"> <h:form id="principal">
+		
+			<!-- <h:panelGrid columns="3" cellpadding="5">
+				<p:outputLabel for="fechaReporte" value="Fecha Reporte:" style="font-weight:bold;" />
+				<p:calendar id="fechaReporte" value="#{reporteUsuario.fechaActual}" locale="es" pattern="dd-MM-yyyy"/>
+				<p:message for="fechaReporte" />				
+	       	</h:panelGrid> -->
+
+			<p:panel style="width:100%;">
+				<br />
+
+				<p:dataTable id="tbl" widgetVar="tbl" value="#{reporteUsuario.lista}" var="p" tableStyle="table-layout: auto;" emptyMessage="Sin registros"
+					paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+					rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice" filteredValue="#{reporteUsuario.listaFilter}">
+
+					<f:facet name="header">Ventas Registradas</f:facet>
+
+					<p:column headerText="Folio" style="text-align:center;" filterBy="#{p.id.folio}" filterMatchMode="contains">
+						<h:outputText value="#{p.id.folio}" />
+					</p:column>
+					
+					<p:column headerText="Tipo Pan" style="text-align:center;" filterBy="#{p.catTipoPan.descripcion}" filterMatchMode="contains">
+						<h:outputText value="#{p.catTipoPan.descripcion}" />
+					</p:column>
+					
+					<p:column headerText="Cantidad" style="text-align:center;" filterBy="#{p.cantidad}" filterMatchMode="contains">
+						<h:outputText value="#{p.cantidad}" />
+					</p:column>
+					
+					<p:column headerText="Costo" style="text-align:center;" filterBy="#{p.catTipoPan.costo}" filterMatchMode="contains">
+						<h:outputText value="#{p.catTipoPan.costo}" />
+					</p:column>
+
+				</p:dataTable>
+				
+				<p:toolbar>
+					<f:facet name="right">
+
+						<p:commandButton value="Cancelar" icon="ui-icon-close" update=":msg principal" action="#{reporteUsuario.limpiar}" ajax="false"
+							global="false" process="@this" style="float:right !important;margin:2px 2px 3px 2px;" />
+
+						<p:commandButton value="Exportar" icon="ui-icon-document" onclick="form.target='_blank'" ajax="false" update=":msg" rendered="false"
+							actionListener="#{reporteUsuario.exportarBandeja}" global="false" process="@this" style="float:right !important;margin:2px 2px 3px 2px;" />
+
+						<p:commandButton value="Imprimir" icon="ui-icon-print" onclick="form.target='_blank'" ajax="false" action="#{reporteUsuario.imprimirVentaUsu}"
+							update=":msg" global="false" process="@this" style="float:right !important;margin:2px 2px 3px 2px;" />
+							
+						<p:commandButton value="Ticket" update="principal" icon="ui-icon-person" iconPos="right"
+							global="false" process="@this" actionListener="#{reporteUsuario.ticketXTurno}"
+							style="float:right !important;margin:2px 2px 3px 2px;"/>
+
+						<!-- <p:commandButton value="Consultar" update="principal" icon="ui-icon-person" iconPos="right"
+							global="false" process="fechaReporte,@this" actionListener="#{reporteUsuario.registroXDia}"
+							style="float:right !important;margin:2px 2px 3px 2px;"/> -->
+					</f:facet>
+				</p:toolbar>
+				
+				
+				<p:dataTable id="tblcorte" widgetVar="tblcorte" value="#{reporteUsuario.panSucursal}" var="pp" tableStyle="table-layout: auto;" emptyMessage="Sin registros"
+					paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+					rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice" filteredValue="#{reporteUsuario.listaFilterPrecio}">
+
+					<f:facet name="header">Existencias</f:facet>
+
+					<p:column headerText="Codigo" style="text-align:center;" filterBy="#{p.id.folio}" filterMatchMode="contains">
+						<h:outputText value="#{pp.id.codigopan}" />
+					</p:column>
+					
+					<p:column headerText="Cantidad" style="text-align:center;" filterBy="#{p.catTipoPan.descripcion}" filterMatchMode="contains">
+						<h:outputText value="#{pp.cantidadTPXDia}" />
+					</p:column>
+					
+					<p:column headerText="Existencia" style="text-align:center;">
+						<p:inputText value="#{pp.corteMatutino}" size="15" rendered="#{reporteUsuario.turno eq 1}"/>
+						<p:inputText value="#{pp.corteVespertino}" size="15" rendered="#{reporteUsuario.turno eq 2}"/>
+					</p:column>
+
+				</p:dataTable>
+				
+				<p:toolbar>
+					<f:facet name="right">
+
+						<p:commandButton value="Cancelar" icon="ui-icon-close" update=":msg principal" action="#{reporteUsuario.limpiar}" ajax="false"
+							global="false" process="@this" style="float:right !important;margin:2px 2px 3px 2px;" />
+						
+						<p:commandButton value="Guardar" update="principal" icon="ui-icon-person" iconPos="right"
+							global="false" process="tblcorte @this" actionListener="#{reporteUsuario.registroExistencia}"
+							style="float:right !important;margin:2px 2px 3px 2px;"/>
+					</f:facet>
+				</p:toolbar>
+								
+
+			</p:panel>
+
+		</h:form> </section>
+		
+		</div>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode" appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 24/07/2021 11:32:47 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.ArticuloPedido" table="articulo_pedido" schema="public" lazy="false">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="catTipoPan" class="com.panaderia.modelo.negocio.CatTipoPan" fetch="select">
+            <column name="codigo" length="7" />
+        </many-to-one>
+        <property name="folio" type="string">
+            <column name="folio" length="10" />
+        </property>
+        <property name="cantidad" type="big_decimal">
+            <column name="cantidad" precision="8" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Inventario</ui:define>
+	<ui:define name="metadata"/>
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				<small>Administración - Inventario</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-home"></i> Inventario</a></li>
+			</ol>
+			</section>
+			<p:messages autoUpdate="true" id="msgs" showSummary="true"
+				showDetail="true" closable="true" />
+			<section class="content"> <h:form id="principal">
+
+				<p:panel style="width:100%;">
+
+					<p:panelGrid columns="3">
+
+						<f:facet name="header">Inventario:</f:facet>
+
+						<p:outputLabel for="nombre" value="Nombre:"
+							style="font-weight:bold;" />
+						<p:inputText id="nombre" value="#{inventarioMB.inventario.nombre}"
+							required="true" requiredMessage="Debe ingresar un nombre." />
+						<p:message for="nombre" />
+
+						<p:outputLabel for="precioC" value="Precio de Compra:"
+							style="font-weight:bold;" />
+						<p:inputText id="precioC"
+							value="#{inventarioMB.inventario.precioCompra}" required="true"
+							requiredMessage="Debe ingresar un Precio de Compra." />
+						<p:message for="precioC" />
+
+						<p:outputLabel for="precioV" value="Precio de Venta:"
+							style="font-weight:bold;" />
+						<p:inputText id="precioV"
+							value="#{inventarioMB.inventario.precioVenta}" required="true"
+							requiredMessage="Debe ingresar un Precio de Venta." />
+						<p:message for="precioV" />
+
+						<p:outputLabel for="tipo" value="Tipo:" style="font-weight:bold;" />
+						<p:selectOneMenu id="tipo" value="#{inventarioMB.inventario.tipo}"
+							required="true" requiredMessage="Debe seleccionar un tipo.">
+							<f:selectItem itemLabel="Seleccionar..." noSelectionOption="true"
+								itemValue="" />
+							<f:selectItem itemLabel="Lavado" itemValue="L" />
+							<f:selectItem itemLabel="Consumo" itemValue="C" />
+						</p:selectOneMenu>
+						<p:message for="tipo" />
+
+						<p:outputLabel for="cantidad" value="Cantidad:"
+							style="font-weight:bold;" />
+						<p:inputText id="cantidad"
+							value="#{inventarioMB.inventario.cantidad}" required="true"
+							requiredMessage="Debe ingresar una Cantidad." />
+						<p:message for="cantidad" />
+
+						<f:facet name="footer">
+
+							<p:commandButton value="Cancelar"
+								actionListener="#{inventarioMB.cancelar}"
+								oncomplete="PF('tbl').clearFilters(); PF('tbl').filter();"
+								update="principal" style="float:right;"
+								title="Cancelar Registro" />
+							<p:commandButton value="Guardar"
+								actionListener="#{inventarioMB.guardar}" update="principal"
+								style="float:right;" title="Guardar Registro" />
+
+						</f:facet>
+
+					</p:panelGrid>
+
+					<br />
+
+					<p:contextMenu for="tbl">
+						<p:menuitem value="Editar" update="principal"
+							icon="ui-icon-pencil" actionListener="#{inventarioMB.editar}"
+							process="tbl,@this" />
+						<p:menuitem value="Eliminar" update="tbl" icon="ui-icon-close"
+							actionListener="#{inventarioMB.eliminar}" process="tbl,@this">
+							<p:confirm header="Confirmación" message="Eliminar inventario?"
+								icon="ui-icon-alert" />
+						</p:menuitem>
+					</p:contextMenu>
+
+					<p:dataTable id="tbl" widgetVar="tbl" value="#{inventarioMB.lista}"
+						var="i" tableStyle="table-layout: auto;"
+						emptyMessage="Sin registros" paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+						selection="#{inventarioMB.slcInventario}" selectionMode="single"
+						rowKey="#{i.id}" filteredValue="#{inventarioMB.listaFilter}">
+
+						<f:facet name="header">Inventario Registrado</f:facet>
+
+						<p:column headerText="Nombre" style="text-align:center;"
+							filterBy="#{i.nombre}" filterMatchMode="contains">
+							<h:outputText value="#{i.nombre}" />
+						</p:column>
+
+						<p:column headerText="Precio Compra" style="text-align:center;"
+							filterBy="#{i.precioCompra}" filterMatchMode="contains">
+							<h:outputText value="#{i.precioCompra}">
+								<f:convertNumber type="currency" currencySymbol="$"
+									locale="es_MX" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Precio Venta" style="text-align:center;"
+							filterBy="#{i.precioVenta}" filterMatchMode="contains">
+							<h:outputText value="#{i.precioVenta}">
+								<f:convertNumber type="currency" currencySymbol="$"
+									locale="es_MX" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Tipo" style="text-align:center;"
+							filterBy="#{i.tipo}" filterMatchMode="exact">
+
+							<f:facet name="filter">
+								<p:selectOneMenu onchange="PF('tbl').filter()">
+									<f:selectItem itemLabel="Todos" itemValue="#{null}"
+										noSelectionOption="true" />
+									<f:selectItem itemLabel="Lavado" itemValue="L" />
+									<f:selectItem itemLabel="Consumo" itemValue="C" />
+								</p:selectOneMenu>
+							</f:facet>
+
+							<h:outputText value="Lavado" rendered="#{i.tipo eq 'L'}" />
+							<h:outputText value="Consumo" rendered="#{i.tipo eq 'C'}" />
+						</p:column>
+
+						<p:column headerText="Cantidad" style="text-align:center;"
+							filterBy="#{i.cantidad}" filterMatchMode="contains">
+							<h:outputText value="#{i.cantidad}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:form> </section>
+		</div>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode" appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

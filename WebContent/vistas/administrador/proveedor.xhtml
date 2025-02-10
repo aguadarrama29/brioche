@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Proveedor</ui:define>
+	<ui:define name="metadata" />
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				<small>Administración - Proveedor</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-home"></i> Proveedor</a></li>
+			</ol>
+			</section>
+			<p:messages autoUpdate="true" id="msgs" showSummary="true"
+				showDetail="true" closable="true" />
+			<section class="content"> <h:form id="principal">
+
+				<p:panel style="width:100%;">
+
+					<p:panelGrid columns="3">
+
+						<f:facet name="header">Proveedor:</f:facet>
+
+						<p:outputLabel for="nombre" value="Nombre:"
+							style="font-weight:bold;" />
+						<p:inputText id="nombre"
+							value="#{proveedorMB.proveedor.descripcion}" required="true"
+							requiredMessage="Debe ingresar un nombre." />
+						<p:message for="nombre" />
+
+						<p:outputLabel for="correo" value="Estatus: " />
+						<p:selectBooleanCheckbox value="#{proveedorMB.estatus}" />
+						<p:message for="correo" />
+
+						<p:outputLabel for="rfc" value="RFC:" style="font-weight:bold;" />
+						<p:inputText id="rfc" value="#{proveedorMB.proveedor.rfc}"
+							required="true" maxlength="16"
+							requiredMessage="Debe ingresar un RFC." />
+						<p:message for="rfc" />
+
+						<p:outputLabel for="direccion" value="Dirección:"
+							style="font-weight:bold;" />
+						<p:inputText id="direccion"
+							value="#{proveedorMB.proveedor.direccion}" required="true"
+							requiredMessage="Debe ingresar una Dirección." />
+						<p:message for="direccion" />
+
+						<p:outputLabel for="razon" value="Razon Social:"
+							style="font-weight:bold;" />
+						<p:inputText id="razon"
+							value="#{proveedorMB.proveedor.razonSocial}" required="true"
+							requiredMessage="Debe ingresar una Razon Social." />
+						<p:message for="razon" />
+
+						<p:outputLabel for="telefono" value="Teléfono:"
+							style="font-weight:bold;" />
+						<p:inputMask id="telefono"
+							value="#{proveedorMB.proveedor.telefono}" mask="(999) 999-9999"
+							required="true" />
+						<p:message for="telefono" />
+
+						<p:outputLabel for="correo" value="Correo:"
+							style="font-weight:bold;" />
+						<p:inputText id="correo" value="#{proveedorMB.proveedor.correo}"
+							required="true" requiredMessage="Debe ingresar un Correo" />
+						<p:message for="correo" />
+
+						<p:outputLabel for="marca" value="Marca:"
+							style="font-weight:bold;" />
+						<p:selectOneMenu id="marca" value="#{proveedorMB.doMarca}"
+							required="true" requiredMessage="Debe seleccionar una Marca.">
+							<f:selectItems value="#{proveedorMB.listaMarca}" var="uA"
+								itemLabel="#{uA.descripcion}" itemValue="#{uA.id}" />
+						</p:selectOneMenu>
+						<p:message for="marca" />
+
+						<f:facet name="footer">
+
+							<p:commandButton value="Cancelar"
+								actionListener="#{proveedorMB.cancelar}"
+								oncomplete="PF('tbl').clearFilters(); PF('tbl').filter();"
+								update="principal" style="float:right;"
+								title="Cancelar Registro" />
+							<p:commandButton value="Guardar"
+								actionListener="#{proveedorMB.guardar}" update="principal"
+								style="float:right;" title="Guardar Registro" />
+
+						</f:facet>
+
+					</p:panelGrid>
+
+					<br />
+
+					<p:contextMenu for="tbl">
+						<p:menuitem value="Editar" update="principal"
+							icon="ui-icon-pencil" actionListener="#{proveedorMB.editar}"
+							process="tbl,@this" />
+						<p:menuitem value="Eliminar" update="tbl" icon="ui-icon-close"
+							actionListener="#{proveedorMB.eliminar}" process="tbl,@this">
+							<p:confirm header="Confirmación" message="Eliminar proveedor?"
+								icon="ui-icon-alert" />
+						</p:menuitem>
+					</p:contextMenu>
+
+					<p:dataTable id="tbl" widgetVar="tbl" value="#{proveedorMB.lista}"
+						var="p" tableStyle="table-layout: auto;"
+						emptyMessage="Sin registros" paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+						selection="#{proveedorMB.slcproveedor}" selectionMode="single"
+						rowKey="#{p.id}" filteredValue="#{proveedorMB.listaFilter}">
+
+						<f:facet name="header">Proveedores Registrados</f:facet>
+
+						<p:column headerText="Nombre" style="text-align:center;"
+							filterBy="#{p.descripcion}" filterMatchMode="contains">
+							<h:outputText value="#{p.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Dirección" style="text-align:center;"
+							filterBy="#{p.direccion}" filterMatchMode="contains">
+							<h:outputText value="#{p.direccion}" />
+						</p:column>
+
+						<p:column headerText="Teléfono" style="text-align:center;"
+							filterBy="#{p.telefono}" filterMatchMode="contains">
+							<h:outputText value="#{p.telefono}" />
+						</p:column>
+
+						<p:column headerText="RFC" style="text-align:center;"
+							filterBy="#{p.rfc}" filterMatchMode="contains">
+							<h:outputText value="#{p.rfc}" />
+						</p:column>
+
+						<p:column headerText="Razon Social" style="text-align:center;"
+							filterBy="#{p.razonSocial}" filterMatchMode="contains">
+							<h:outputText value="#{p.razonSocial}" />
+						</p:column>
+
+						<p:column headerText="Correo" style="text-align:center;"
+							filterBy="#{p.correo}" filterMatchMode="contains">
+							<h:outputText value="#{p.correo}" />
+						</p:column>
+
+						<p:column headerText="Marca" style="text-align:center;"
+							filterBy="#{p.correo}" filterMatchMode="contains">
+							<h:outputText value="#{p.correo}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:form> </section>
+		</div>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode"
+			appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

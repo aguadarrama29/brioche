@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 14/06/2024 01:01:41 PM by Hibernate Tools 5.3.0.Beta2 --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="com.panaderia.modelo.negocio.PrecioCantidadSucursal"
+		table="precio_cantidad_sucursal" schema="public" >
+		<composite-id class="com.panaderia.modelo.negocio.PrecioCantidadSucursalId" name="id">
+			<key-property name="costo" type="double">
+				<column name="costo" />
+			</key-property>
+			
+			<key-property name="idUbicacion" type="int">
+				<column name="id_ubicacion" />
+			</key-property>
+			
+			 <key-property name="fecha" type="date">  
+                <column name="fecha"/>
+            </key-property>
+		</composite-id>
+		
+		 <many-to-one name="catUbicacion" class="com.panaderia.modelo.negocio.CatUbicacion" update="false" insert="false" fetch="select">
+            <column name="id_ubicacion"/>
+        </many-to-one>
+		
+		<property generated="never" lazy="false" name="cantidad"
+			optimistic-lock="true" type="java.lang.Integer" unique="false">
+			<column name="cantidad" />
+		</property>
+		<property generated="never" lazy="false"
+			name="cantidadVendida" optimistic-lock="true"
+			type="java.lang.Integer" unique="false">
+			<column name="cantidad_vendida">
+				<comment>se va descontando con cada venta</comment>
+			</column>
+		</property>
+		
+		<property generated="never" lazy="false" name="estatus" type="java.lang.Integer" unique="false">
+			<column name="estatus"></column>
+		</property>
+		
+	</class>
+</hibernate-mapping>

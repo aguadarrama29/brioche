@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 24/07/2021 11:32:47 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.Pedido" table="pedido" schema="public" lazy="false">
+        <id name="folio" type="string">
+            <column name="folio" length="10" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="catEstatusPedido" class="com.panaderia.modelo.negocio.CatEstatusPedido" fetch="select">
+            <column name="id_estatus_pedido" />
+        </many-to-one>
+        <many-to-one name="catCliente" class="com.panaderia.modelo.negocio.CatCliente" fetch="select">
+            <column name="id_cliente" />
+        </many-to-one>
+        <property name="nombre" type="string">
+            <column name="nombre" length="150" />
+        </property>
+        <property name="ape1" type="string">
+            <column name="ape1" length="150" />
+        </property>
+        <property name="ape2" type="string">
+            <column name="ape2" length="150" />
+        </property>
+        <property name="domicilio" type="string">
+            <column name="domicilio" />
+        </property>
+        
+        <property name="fecInicio" type="date">
+            <column name="fec_inicio" length="13" />
+        </property>
+        <property name="fecFin" type="date">
+            <column name="fec_fin" length="13" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="telefono" length="20" />
+        </property>
+        <property name="total" type="big_decimal">
+            <column name="total" precision="8" />
+        </property>
+        <property name="ACuenta" type="big_decimal">
+            <column name="a_cuenta" precision="8" />
+        </property>
+         <property name="anio" type="java.lang.Integer">
+            <column name="anio" />
+        </property>
+         <property name="comentario" type="string">
+            <column name="comentario"/>
+        </property>
+        
+        <property name="horaI" type="string">
+            <column name="hora_inicio" length="20" />
+        </property>
+        <property name="horaF" type="string">
+            <column name="hora_fin" length="20" />
+        </property>
+        <property name="coordenada" type="string">
+            <column name="coordenada" length="200" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

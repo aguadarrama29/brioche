@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Punto de Venta</ui:define>
+	<ui:define name="metadata"/>
+
+	<ui:define name="content">
+		<div class="content-wrapper">    
+
+			<section class="content-header">
+
+			<h1>
+				Total:
+				<h:outputText value="#{ventaMB.total}" id="totalGen" />
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-dashboard"></i> inicio para administrador</a></li>
+				<li class="active"></li>
+			</ol>
+
+			</section>
+
+			<p:messages autoUpdate="true" id="msgs" showSummary="true"
+				showDetail="true" closable="true" />
+
+			<section class="invoice">
+
+			<div class="box box-primary">
+
+				<div class="box-body">
+
+					<h:form id="principal" prependId="false">
+						<p:panelGrid id="panelPrincipal" columns="1" style="width:auto;">
+
+							<p:contextMenu for="panesVenta">
+								<p:menuitem value="Agregar con Cantidad" icon="ui-icon-pencil"
+									oncomplete="PF('dlgAgregaCanti').show()"
+									process="panesVenta,@this" />
+							</p:contextMenu>
+							<p:dataTable var="car" value="#{ventaMB.lista}"
+								widgetVar="panesVenta" id="panesVenta"
+								emptyMessage="No hay coincidencias"
+								filteredValue="#{ventaMB.filteredCars}"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,20" rows="10" paginator="true"
+								selectionMode="single" rowKey="#{car.id}"
+								selection="#{ventaMB.panXSucursa}">
+
+								<p:ajax event="rowSelect" listener="#{ventaMB.agrega}"
+									update="@form :totalGen" />
+
+								<f:facet name="header">
+									<p:outputPanel>
+										<h:outputText value="Search all fields:" />
+										<p:inputText id="globalFilter"
+											onkeyup="PF('panesVenta').filter()" style="width:150px"
+											placeholder="Filtrar por palabra.." />
+									</p:outputPanel>
+								</f:facet>
+								<p:column filterBy="#{car.id.codigopan}" headerText="Codigo"
+									filterMatchMode="contains">
+									<h:outputText value="#{car.id.codigopan}" />
+								</p:column>
+
+								<p:column filterBy="#{car.catTipoPan.descripcion}"
+									headerText="Descripción" filterMatchMode="contains">
+									<h:outputText value="#{car.catTipoPan.descripcion}" />
+								</p:column>
+
+								<p:column filterBy="#{car.catTipoPan.costo}" headerText="Price"
+									filterFunction="#{ventaMB.filterByPrice}">
+									<h:outputText value="#{car.catTipoPan.costo}">
+										<f:convertNumber currencySymbol="$" type="currency" />
+									</h:outputText>
+								</p:column>
+
+
+
+							</p:dataTable>
+
+
+							<p:dataTable var="p" value="#{ventaMB.listaslc}"
+								widgetVar="tablaVenta" id="tablaVenta"
+								emptyMessage="No hay coincidencias"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,20" rows="10" paginator="true"
+								sortBy="#{p.pan.id.fecha}">
+
+								<f:facet name="header">
+									<h:outputText value="Venta"
+										style="font-size:16px; color:#0084c7; font-weight:bold;" />
+								</f:facet>
+
+								<p:column headerText="Descripción">
+									<h:outputText value="#{p.pan.catTipoPan.descripcion}" />
+								</p:column>
+
+								<p:column headerText="Cantidad">
+									<h:outputText value="#{p.cantidad}" />
+								</p:column>
+
+								<p:column headerText="Price">
+									<h:outputText value="#{p.pan.catTipoPan.costo}">
+										<f:convertNumber currencySymbol="$" type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:summaryRow>
+									<p:column colspan="2" style="text-align:right">
+										<h:outputText value="Total:" />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{ventaMB.total}">
+											<f:convertNumber type="number" currencySymbol="$" />
+										</h:outputText>
+									</p:column>
+								</p:summaryRow>
+
+							</p:dataTable>
+						</p:panelGrid>
+						<p:toolbar>
+							<f:facet name="right">
+								<p:commandButton value="Cancelar" process="@this"
+									icon="ui-icon-circle-close" global="false"
+									action="#{ventaMB.limpiar}" />
+								<p:commandButton value="Guardar" icon="ui-icon-disk" id="act"
+									update=":msgs" />
+							</f:facet>
+						</p:toolbar>
+					</h:form>
+
+				</div>
+
+			</div>
+
+			</section>
+
+		</div>
+
+
+	</ui:define>
+</ui:composition>
+

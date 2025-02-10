@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Lista Inicial</ui:define>
+	<ui:define name="metadata">
+	</ui:define>
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+
+			<h1>
+				<small>Administración - Lista Inicial</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-home"></i>Lista Inicial</a></li>
+			</ol>
+			</section>
+
+			<p:growl id="msg" showDetail="true" autoUpdate="false" />
+			<div class="box box-primary">
+
+				<div class="box-body">
+
+					<h:form id="principal" prependId="false">
+
+						<p:panel style="width:100%;">
+							<br />
+							<h:panelGrid columns="6" style="width:100%">
+								<p:outputLabel for="sucursal" value="Sucursal:"
+									style="font-weight:bold;" />
+
+								<p:selectOneMenu id="sucursal"
+									value="#{listaInicialMB.catUbicacion}" required="true"
+									requiredMessage="Debe seleccionar una Sucursal."
+									converter="#{ubicacionConverter}">
+									<p:ajax event="change" listener="#{listaInicialMB.sucursal}" 
+									update="principal:tablaTipoPan principal:panelBtn"/>
+									<f:selectItem itemValue="#{null}" noSelectionOption="true" />
+									<f:selectItems value="#{listaInicialMB.listaSucursales}" var="uA"
+										itemLabel="#{uA.descripcion}" itemValue="#{uA}" />
+								</p:selectOneMenu>
+								<p:message for="sucursal" />
+							</h:panelGrid>
+
+							<p:panelGrid columns="1" style="width:100%;" id="panelBtn">
+								<f:facet name="header">
+									<p:commandButton value="Agregar" icon="ui-icon-plusthick"
+										action="#{listaInicialMB.agregar}"
+										oncomplete="PF('dlgAdd').show()" global="false"
+										process="@this" title="Agregar Pan" update=":formEdita"
+										style="float:right !important;margin:2px 2px 3px 2px;" rendered="#{listaInicialMB.idSucursal !=0}"/>
+
+										
+									<p:commandButton value="Imprimir" icon="ui-icon-print"
+										rendered="false" onclick="form.target='_blank'" ajax="false"
+										action="#{listaInicialMB.reporteListainicial}" global="false"
+										process="@form"
+										style="float:right !important;margin:2px 2px 3px 2px;" />
+
+								</f:facet>
+							</p:panelGrid>
+
+							<p:dataTable id="tablaTipoPan" widgetVar="tablaTipoPan"
+								value="#{listaInicialMB.lista}" var="p"
+								tableStyle="table-layout: auto;" emptyMessage="Sin registros"
+								paginator="true" rows="10" paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+								rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+								rowKey="#{p.id.codigopan}"
+								filteredValue="#{listaInicialMB.listaFilter}">
+
+								<f:facet name="header">Usuarios Registrados</f:facet>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="indice" style="text-align:center;" />
+									</f:facet>
+									<h:outputText value="#{indice + 1}" />
+								</p:column>
+
+								<p:column headerText="Operaciones" style="text-align:center;"
+									width="100">
+									<p:menuButton value="Menú">
+										<p:menuitem action="#{listaInicialMB.editar(p)}"
+											icon="ui-icon-pencil" title="Editar" value="Editar"
+											oncomplete="PF('dlgAdd').show()" update=":formEdita" />
+
+										<p:menuitem actionListener="#{listaInicialMB.elimina(p)}"
+											icon="ui-icon-trash" title="Eliminar" process="@this"
+											update=":formElimina" value="Eliminar"
+											oncomplete="PF('dlgConfirmar').show()" />
+
+
+									</p:menuButton>
+								</p:column>
+
+								<p:column headerText="Código" style="text-align:center;"
+									filterBy="#{p.id.codigopan}" filterMatchMode="contains">
+									<h:outputText value="#{p.id.codigopan}" />
+								</p:column>
+
+								<p:column headerText="Cantidad" style="text-align:center;"
+									filterBy="#{p.cantidad}" filterMatchMode="contains">
+									<h:outputText value="#{p.cantidad}" />
+								</p:column>
+
+								<p:column headerText="Observaciones" style="text-align:center;">
+									<h:outputText value="#{p.comentario}" />
+								</p:column>
+
+
+							</p:dataTable>
+
+						</p:panel>
+
+					</h:form>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<p:dialog header="Lista Inicial" appendTo="@(body)" id="dlgAdd"
+			dynamic="true" showEffect="scale" hideEffect="clip" width="auto"
+			height="175" modal="true" widgetVar="dlgAdd" resizable="false">
+			<h:form id="formEdita">
+
+				<h:panelGrid columns="1">
+
+					<h:panelGrid columns="6">
+						<p:outputLabel for="proDes" value="Tipo de Pan:"
+							style="font-weight:bold;" />
+						<p:autoComplete id="proDes" size="40" queryDelay="2000"
+							queryDeletionDelay="1000" value="#{listaInicialMB.pan}"
+							completeMethod="#{listaInicialMB.completeArticulosDes}" var="i"
+							itemValue="#{i}" itemLabel="#{i.descripcion}"
+							forceSelection="true" placeholder="Descripción..."
+							emptyMessage="Sin resultados" converter="#{tipoPanConverter}"
+							scrollHeight="200" disabled="#{listaInicialMB.accion !=1}" required="true">
+
+							<f:facet name="itemtip">
+								<h:panelGrid columns="1" cellpadding="10">
+									<h:outputText value="Codigo #{i.codigo}" />
+								</h:panelGrid>
+							</f:facet>
+						</p:autoComplete>
+						<p:message for="proDes" />
+						
+						<p:outputLabel for="cos" value="Cantidad:"
+							style="font-weight:bold;" />
+						<p:inputNumber id="cos"  minValue="1" maxValue="1000" decimalPlaces="0" 
+						value="#{listaInicialMB.tipoPan.cantidad}" required="true" 
+							requiredMessage="Debe capturar un costo"/>
+						
+						<p:message for="cos" />
+						
+					</h:panelGrid>
+
+					<h:panelGrid columns="3" style="width:100%">
+						
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:outputLabel for="obs" value="Comentario:"
+							style="font-weight:bold;" />
+						<p:inputTextarea rows="4" cols="120" id="obs"
+							value="#{listaInicialMB.tipoPan.comentario}" autoResize="false"
+							style="resize: none" />
+						<p:message for="obs" />
+					</h:panelGrid>
+
+				</h:panelGrid>
+
+				<p:toolbar>
+
+					<f:facet name="right">
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							onclick="PF('dlgAdd').hide();" process="@this"
+							actionListener="#{listaInicialMB.limpiar}" />
+
+						<p:commandButton value="Guardar" icon="ui-icon-disk"
+							actionListener="#{listaInicialMB.guardar()}"
+							update=":principal:tablaTipoPan :msg"
+							oncomplete="if (!args.validationFailed){PF('dlgAdd').hide()} PF('tablaTipoPan').clearFilters(); PF('tablaTipoPan').filter();" />
+					</f:facet>
+
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog header="Eliminar Registro" dynamic="true" showEffect="scale"
+			hideEffect="clip" modal="true" widgetVar="dlgConfirmar"
+			id="dlgConfirmar">
+
+			<h:outputText
+				value="Los registros eliminados no podran recuperarse. ¿Desea continuar?" />
+			<br />
+
+			<h:form id="formElimina">
+				<p:toolbar>
+					<f:facet name="right">
+						<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+							onclick="PF('dlgConfirmar').hide()" process="@this" />
+
+						<p:commandButton value="Si" actionListener="#{listaInicialMB.eliminar}"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+							oncomplete="PF('dlgConfirmar').hide() PF('tablaTipoPan').clearFilters(); PF('tablaTipoPan').filter();"
+							update=":principal:tablaTipoPan :msg" />
+
+					</f:facet>
+
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode"
+			appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

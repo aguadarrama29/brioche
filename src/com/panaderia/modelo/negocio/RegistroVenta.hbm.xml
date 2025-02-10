@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 6/11/2019 10:04:24 PM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.RegistroVenta" table="registro_venta" schema="public">
+        <comment>estatus: vendido--V cotizacion--C cancelado--X Muestra--M Folio se reincia consecutivo por mes formado por suc-mmaa-00000000</comment>
+        <composite-id name="id" class="com.panaderia.modelo.negocio.RegistroVentaId">
+            <key-property name="folio" type="string">
+                <column name="folio" length="17" />
+            </key-property>
+            <key-property name="codigoTipoPan" type="string">
+                <column name="codigo_tipo_pan" length="7" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="catTipoPan" class="com.panaderia.modelo.negocio.CatTipoPan" update="false" insert="false" fetch="select">
+            <column name="codigo_tipo_pan" length="7" not-null="true" />
+        </many-to-one>
+        <many-to-one name="catUbicacion" class="com.panaderia.modelo.negocio.CatUbicacion" update="false" insert="false" fetch="select">
+            <column name="id_ubicacion" not-null="true" />
+        </many-to-one>
+        <many-to-one name="catUsuario" class="com.panaderia.modelo.negocio.CatUsuario" fetch="select">
+            <column name="id_usuario" not-null="true" />
+        </many-to-one>
+        <property name="cantidad" type="int">
+            <column name="cantidad" not-null="true" />
+        </property>
+        <property name="fecha" type="timestamp">
+            <column name="fecha" length="29" not-null="true" />
+        </property>
+        <property name="estatus" type="java.lang.Character">
+            <column name="estatus" length="1" />
+        </property>
+        <property name="consecutivo" type="int">
+            <column name="consecutivo" not-null="true" />
+        </property>
+        
+        <property name="formaPago" type="java.lang.Integer">
+            <column name="forma_pago" />
+        </property>
+        <property name="acuenta" type="big_decimal">
+            <column name="acuenta" precision="6" />
+        </property>
+        <property name="descuento" type="big_decimal">
+            <column name="descuento" precision="6" />
+        </property>
+        
+        <property name="tipo" type="java.lang.Integer">
+            <column name="tipo" />
+        </property>
+        <property name="precio" type="big_decimal">
+            <column name="precio" precision="6" />
+        </property>
+        <property name="listrosIgualacion" type="big_decimal">
+            <column name="litros_igualacion" precision="5" />
+        </property>
+        
+        <property name="efectivo" type="big_decimal">
+            <column name="efectivo" precision="8" />
+        </property>
+        <property name="total" type="big_decimal">
+            <column name="total" precision="8" />
+        </property>
+    </class>
+</hibernate-mapping>

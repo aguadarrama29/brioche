@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/10/2018 11:11:12 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.CatUnidadMedida" table="cat_unidad_medida" schema="public" lazy="false">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="240" not-null="true" />
+        </property>
+        
+        <property name="abreviatura" type="string">
+            <column name="abreviatura" length="10" not-null="true" />
+        </property>
+        
+        <property name="estatus" type="boolean">
+            <column name="estatus" not-null="true" />
+        </property>
+      <!--   <set name="catMateriaPrimas" table="cat_materia_prima" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_unidad" not-null="true" />
+            </key>
+            <one-to-many class="com.panaderia.modelo.negocio.CatMateriaPrima" />
+        </set> -->
+    </class>
+</hibernate-mapping>

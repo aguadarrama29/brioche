@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<meta charset="utf-8" />
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Brioche-<ui:insert name="tituloPag"></ui:insert></title>
+	<!-- Tell the browser to be responsive to screen width -->
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
+	<!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" href="#{request.contextPath}/plantilla/bootstrap/css/bootstrap.min.css" type="text/css" />
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"
+		type="text/css" />
+	<!-- Ionicons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"
+		type="text/css" />
+	<!-- Theme style -->
+	<link rel="stylesheet" href="#{request.contextPath}/plantilla/dist/css/AdminLTE.min.css" type="text/css" />
+	<link rel="stylesheet" href="#{request.contextPath}/plantilla/dist/css/skins/skin-green.min.css" type="text/css" />
+
+	<h:outputStylesheet name="css/default.css" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="#{resource['images/favicon.ico']}" />
+	
+	<h:outputScript library="js" name="calendar_es.js" />
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</h:head>
+
+<h:body onload="PF('estatusDialog').hide();" class="hold-transition skin-green sidebar-mini">
+
+	<p:ajaxStatus onstart="PF('estatusDialog').show();" onsuccess="PF('estatusDialog').hide();" />
+	<p:growl id="growl" showDetail="true" autoUpdate="true" life="6000" showSummary="true" escape="false" />
+
+	<div class="wrapper">
+
+		<ui:include src="encabezado.xhtml" />
+
+		<ui:include src="menu.xhtml" />
+
+		<ui:insert name="content" />
+
+		<ui:include src="pie.xhtml" />
+
+	</div>
+
+	<h:form>
+		<p:idleMonitor timeout="2000000" onactive="PF('logoutDialog').show();" />
+	</h:form>
+
+	<p:dialog id="logoutDialog" widgetVar="logoutDialog" width="400" height="110" modal="true" showHeader="false"
+		draggable="false" closable="false" resizable="false" closeOnEscape="false" position="center" maximizable="false"
+		minimizable="false" hideEffect="explode" showEffect="bounce">
+		<h:form>
+			<p:panelGrid columns="1" style="width:100%;">
+				<h:panelGroup style="display:block; text-align:center">
+					<h:outputText value="Sesión de usuario sin actividad..." style="font-size:18px;font-weight:bold;color:orange;" />
+					<br />
+					<br />
+					<h:outputText value="Se recomienda cerrar esta pestaña del navegador." style="font-weight:bold;" />
+					<br />
+					<br />
+					<p:commandButton action="#{logout.logout}" onclick="window.close();" value="Aceptar" process="@this" />
+				</h:panelGroup>
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="estatusDialog" modal="true" draggable="false" closable="false" resizable="false"
+		showHeader="false" id="estatusDialog">
+		<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+	</p:dialog>
+
+	<!-- REQUIRED JS SCRIPTS -->
+
+	<!-- Bootstrap 3.3.6 -->
+	<script src="#{request.contextPath}/plantilla/bootstrap/js/bootstrap.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="#{request.contextPath}/plantilla/dist/js/app.min.js"></script>
+	
+	<h:outputScript library="js" name="funciones.js" />
+
+</h:body>
+</html>

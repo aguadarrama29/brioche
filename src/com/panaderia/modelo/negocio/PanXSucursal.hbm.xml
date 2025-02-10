@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 17/07/2019 12:39:28 PM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.PanXSucursal" table="pan_x_sucursal" schema="public" lazy="false">
+        <composite-id name="id" class="com.panaderia.modelo.negocio.PanXSucursalId">
+            <key-property name="codigopan" type="string">
+                <column name="codigopan" length="20" />
+            </key-property>
+            <key-property name="idUbicacion" type="int">
+                <column name="id_ubicacion" />
+            </key-property>
+            <key-property name="fecha" type="date">  
+                <column name="fecha" length="15"/>
+            </key-property>
+             <key-property name="tipo" type="int">  
+                <column name="tipo" length="15" not-null="true"/>
+            </key-property>
+            
+        <!-- 
+        <property name="date" type="date"/>  			en bd debe ser date
+        <property name="time" type="time"/>   			y en base time without time zone solo pone la hora 
+        <property name="dateTime" type="timestamp"/>   en  base de datos debe ser time with time zone-->
+        
+        </composite-id>
+        <many-to-one name="catTipoPan" class="com.panaderia.modelo.negocio.CatTipoPan" update="false" insert="false" fetch="select">
+            <column name="codigopan" length="20" not-null="true" />
+        </many-to-one>
+        <many-to-one name="catUbicacion" class="com.panaderia.modelo.negocio.CatUbicacion" update="false" insert="false" fetch="select">
+            <column name="id_ubicacion" not-null="true" />
+        </many-to-one>
+        <property name="cantidad" type="int">
+            <column name="cantidad" not-null="true" />
+        </property>
+        <property name="entrega" type="string">
+            <column name="entrega" length="200" not-null="false" />
+        </property>
+        <property name="recibe" type="string">
+            <column name="recibe" length="200" />
+        </property>
+       <!-- <property name="tipo" type="int">
+            <column name="tipo" not-null="true" />
+        </property>
+         <property name="fecha" type="time">
+            <column name="fecha" length="15" />
+        </property> -->
+        <property name="comentarioRecibe" type="string">
+            <column name="comen_recibe" />
+        </property>
+        <property name="comentario" type="string">
+            <column name="comentario" />
+        </property>
+         <property name="estatus" type="int">
+            <column name="estatus" />
+        </property>
+        
+         <property name="cantidadTPXDia" type="int">
+            <column name="tipo_pan_dia" not-null="true" />
+        </property>
+        
+        <property name="corteMatutino" type="int">
+            <column name="corte_matutino" not-null="true" />
+        </property>
+        <property name="corteVespertino" type="int">
+            <column name="corte_vespertino" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

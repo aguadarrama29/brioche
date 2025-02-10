@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/10/2018 11:11:12 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.CatMateriaPrima" table="cat_materia_prima" schema="public" lazy="false">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="catUbicacion" class="com.panaderia.modelo.negocio.CatUbicacion" fetch="select">
+            <column name="id_ubicacion" not-null="true" />
+        </many-to-one>
+        <many-to-one name="catUnidadMedida" class="com.panaderia.modelo.negocio.CatUnidadMedida" fetch="select">
+            <column name="id_unidad" not-null="true" />
+        </many-to-one>
+        <many-to-one name="catProveedor" class="com.panaderia.modelo.negocio.CatProveedor" fetch="select">
+            <column name="id_proveedor" not-null="true" />
+        </many-to-one>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="250" />
+        </property>
+        <property name="cantidad" type="big_decimal">
+            <column name="cantidad" precision="10" not-null="false" />
+        </property>
+        <property name="costoKilo" type="big_decimal">
+            <column name="costokilo" precision="10" not-null="false" />
+        </property>
+        <property name="estatus" type="boolean">
+            <column name="estatus" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

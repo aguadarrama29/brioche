@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Onomástico</ui:define>
+	<ui:define name="metadata">
+	</ui:define>
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+
+			<h1>
+				<small>Administración - Onomásticos</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-home"></i>Catálogo Tipo de
+						Pan</a></li>
+			</ol>
+			</section>
+
+			<p:growl id="msg" showDetail="true" autoUpdate="false" />
+			<div class="box box-primary">
+
+				<div class="box-body">
+
+					<h:form id="principal" prependId="false">
+
+						<p:panel style="width:100%;">
+							<br />
+
+							<p:panelGrid columns="1" style="width:100%;">
+								<f:facet name="header">
+									<p:commandButton value="Agregar" icon="ui-icon-plusthick"
+										action="#{tipoPanMB.agregar}" oncomplete="PF('dlgAdd').show()"
+										global="false" process="@this" title="Agregar Destinatarios"
+										style="float:right !important;margin:2px 2px 3px 2px;" />
+
+									<p:commandButton value="Imprimir" icon="ui-icon-print" rendered="false"
+										onclick="form.target='_blank'" ajax="false"
+										action="#{tipoPanMB.reporteTipoPan}" global="false"
+										process="@form"
+										style="float:right !important;margin:2px 2px 3px 2px;" />
+
+								</f:facet>
+							</p:panelGrid>
+
+							<p:dataTable id="tablaTipoPan" widgetVar="tablaTipoPan"
+								value="#{tipoPanMB.lista}" var="p"
+								tableStyle="table-layout: auto;" emptyMessage="Sin registros"
+								paginator="true" rows="10" paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+								rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+								rowKey="#{p.codigo}" filteredValue="#{tipoPanMB.listaFilter}">
+
+								<f:facet name="header">Usuarios Registrados</f:facet>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="indice" style="text-align:center;" />
+									</f:facet>
+									<h:outputText value="#{indice + 1}" />
+								</p:column>
+
+								<p:column headerText="Operaciones" style="text-align:center;"
+									width="100">
+									<p:menuButton value="Menú">
+										<p:menuitem action="#{tipoPanMB.editar(p)}"
+											icon="ui-icon-pencil" title="Editar" value="Editar"
+											oncomplete="PF('dlgAdd').show()" update=":formEdita" />
+
+										<p:menuitem actionListener="#{tipoPanMB.editar(p)}"
+											icon="ui-icon-trash" title="Eliminar" process="@this"
+											update=":formElimina" value="Eliminar"
+											oncomplete="PF('dlgConfirmar').show()" />
+
+
+									</p:menuButton>
+								</p:column>
+
+								<p:column headerText="Código" style="text-align:center;"
+									filterBy="#{p.codigo}" filterMatchMode="contains">
+									<h:outputText value="#{p.codigo}" />
+								</p:column>
+								<p:column headerText="Descripción" style="text-align:center;" filterBy="#{p.descripcion}" filterMatchMode="contains">
+									<h:outputText value="#{p.descripcion}"  />
+								</p:column>
+								<p:column headerText="Costo" style="text-align:center;" filterBy="#{p.costo}" filterMatchMode="contains">
+									<h:outputText value="#{p.costo}" />
+								</p:column>
+								<p:column headerText="Observaciones" style="text-align:center;">
+									<h:outputText value="#{p.comentario}" />
+								</p:column>
+
+
+							</p:dataTable>
+
+						</p:panel>
+
+					</h:form>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<p:dialog header="Adm. Tipo Pan" appendTo="@(body)" id="dlgAdd"
+			dynamic="true" showEffect="scale" hideEffect="clip" width="auto"
+			height="170" modal="true" widgetVar="dlgAdd" resizable="false">
+			<h:form id="formEdita">
+
+				<h:panelGrid columns="1">
+				
+					<h:panelGrid columns="3">
+						<p:outputLabel for="codigo" value="Codigo: " />
+						<h:outputText id="codigo" value="#{tipoPanMB.tipoPan.codigo}" rendered="#{tipoPanMB.accion ==2}"/>
+						<p:message for="codigo" rendered="#{tipoPanMB.accion ==2}"/>
+						
+						<p:inputText id="codigo2" value="#{tipoPanMB.tipoPan.codigo}"
+							required="true" requiredMessage="Debe ingresar un código"
+							size="10" maxlength="10" rendered="#{tipoPanMB.accion ==1}"/>
+						<p:message for="codigo2" rendered="#{tipoPanMB.accion ==1}"/>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="9" style="width:100%">
+
+						<p:outputLabel for="des" value="Descripción"
+							style="font-weight:bold;" />
+						<p:inputText id="des" value="#{tipoPanMB.tipoPan.descripcion}"
+							required="true" requiredMessage="Debe ingresar una descripción"
+							size="60" />
+						<p:message for="des" />
+
+
+						<p:outputLabel for="cos" value="Costo:" style="font-weight:bold;" />
+						<p:inputText id="cos" value="#{tipoPanMB.tipoPan.costo}" size="7"
+							maxlength="5" required="true"
+							requiredMessage="Debe capturar un costo"
+							onkeypress="return SoloNumeroDecimal(event,this)" />
+						<p:message for="cos" />
+
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:outputLabel for="obs" value="Observaciones:"
+							style="font-weight:bold;" />
+						<p:inputTextarea rows="4" cols="120" id="obs"
+							value="#{tipoPanMB.tipoPan.comentario}" autoResize="false"
+							style="resize: none" />
+						<p:message for="obs" />
+					</h:panelGrid>
+
+				</h:panelGrid>
+
+				<p:toolbar>
+
+					<f:facet name="right">
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							onclick="PF('dlgAdd').hide();" process="@this"
+							actionListener="#{tipoPanMB.limpiar}" />
+
+						<p:commandButton value="Guardar" icon="ui-icon-disk"
+							actionListener="#{tipoPanMB.guardar()}"
+							update="@form :msg :principal  :principal:tablaTipoPan"
+							oncomplete="if (!args.validationFailed){PF('dlgAdd').hide()} PF('tablaTipoPan').clearFilters(); PF('tablaTipoPan').filter();" />
+					</f:facet>
+
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog header="Eliminar Registro" dynamic="true" showEffect="scale"
+			hideEffect="clip" modal="true" widgetVar="dlgConfirmar"
+			id="dlgConfirmar">
+
+			<h:outputText
+				value="Los registros eliminados no podran recuperarse. ¿Desea continuar?" />
+			<br />
+
+			<h:form id="formElimina">
+				<p:toolbar>
+					<f:facet name="right">
+						<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+							onclick="PF('dlgConfirmar').hide()" process="@this" />
+
+						<p:commandButton value="Si" actionListener="#{tipoPanMB.eliminar}"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+							oncomplete="PF('dlgConfirmar').hide() PF('tablaTipoPan').clearFilters(); PF('tablaTipoPan').filter();"
+							update=":principal:tablaTipoPan  :msg" />
+
+					</f:facet>
+
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode"
+			appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

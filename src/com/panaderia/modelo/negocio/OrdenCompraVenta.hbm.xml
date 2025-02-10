@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/10/2018 11:11:12 AM by Hibernate Tools 4.0.1.Final -->
+<hibernate-mapping>
+    <class name="com.panaderia.modelo.negocio.OrdenCompraVenta" table="orden_compra_venta" schema="public" lazy="false">
+        <id name="folio" type="string">
+            <column name="folio" length="7" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="catProveedor" class="com.panaderia.modelo.negocio.CatProveedor" fetch="select">
+            <column name="id_proveedor" not-null="true" />
+        </many-to-one>
+        <many-to-one name="catUsuario" class="com.panaderia.modelo.negocio.CatUsuario" fetch="select">
+            <column name="id_usuario" not-null="true" />
+        </many-to-one>
+        <property name="fechaP" type="date">
+            <column name="fecha_pedido" length="13" not-null="true" />
+        </property>
+        <property name="fechaE" type="date">
+            <column name="fecha_entrega" length="13" />
+        </property>
+        <property name="sucursal" type="string">
+            <column name="sucursal" length="150" />
+        </property>
+        <property name="recibio" type="string">
+            <column name="recibio" length="150" />
+        </property>
+        <property name="tipo" type="java.lang.Character">
+            <column name="tipo" length="1" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Existencia</ui:define>
+
+	<ui:define name="metadata" />
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				Existencia de Pan: <small><h:outputLabel id="nick"
+						value="#{userSession.usuario.descripcion}" /></small>
+			</h1>
+			</section>
+
+			<p:messages autoUpdate="true" id="msgs" showSummary="true"
+				showDetail="true" closable="true" />
+
+			<section class="content"> <h:form id="principal">
+
+				<p:tabView activeIndex="#{panXSucursalMB.index}" id="tabs">
+					<p:ajax event="tabChange" listener="#{panXSucursalMB.onTabChange}"
+						update="@form" />
+					<p:tab title="Recepción de Pan">
+
+						<p:panelGrid id="panelPrincipal" columns="1" style="width:100%;">
+							<h:panelGrid columns="6" style="width:100%">
+								<p:outputLabel for="res2" value="Recibe:"
+									style="font-weight:bold;" />
+								<p:inputText id="res2" value="#{panXSucursalMB.nombreER}"
+									required="true" requiredMessage="Debe ingresar quien recibe"
+									size="50" />
+								<p:message for="res2"
+									rendered="#{login.usuario.catPerfil.id==1}" />
+							</h:panelGrid>
+							
+							
+							<p:panelGrid columns="1" rendered="false">
+								<f:facet name="header">
+									<h:outputText value="Reumen X Precio"
+										style="font-size:16px; color:#ff00ff; font-weight:bold;" />
+								</f:facet>
+
+								<p:dataTable value="#{panXSucursalMB.listaPrevioPrecio}" var="bp"
+									emptyMessage="Sin articulos en venta" id="tablaVentap"
+									widgetVar="tablaVentap"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+									rowsPerPageTemplate="5,10,20,50,100,500" paginator="true"
+									rows="10" filterDelay="2000" >
+
+									<p:column headerText="Precio" style="text-align:center;">
+										<h:outputText value="#{bp.id.costo}" />
+									</p:column>
+									
+									<p:column headerText="Cantidad" style="text-align:center;">
+										<p:inputText value="#{bp.cantidad}" size="8" readonly="true">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+
+								</p:dataTable>
+							</p:panelGrid>
+							
+
+							<p:panelGrid columns="1">
+								<f:facet name="header">
+									<h:outputText value="Registros"
+										style="font-size:16px; color:#ff00ff; font-weight:bold;" />
+								</f:facet>
+
+								<p:dataTable value="#{panXSucursalMB.listaPrevio}" var="b"
+									emptyMessage="Sin articulos en venta" id="tablaVenta"
+									widgetVar="tablaVenta"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+									rowsPerPageTemplate="5,10,20,50,100,500" paginator="true"
+									rows="10" filterDelay="2000">
+
+									<p:column headerText="Tipo pan" style="text-align:center;">
+										<h:outputText value="#{b.catTipoPan.descripcion}" />
+									</p:column>
+									
+									<p:column headerText="Enviado" style="text-align:center;">
+										<p:inputText value="#{panXSucursalMB.calculo(b)}" size="8" readonly="true">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+
+									<p:column headerText="Existencia en tienda" style="text-align:center;">
+										<p:inputText value="#{b.cantidad}" size="8" readonly="true">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+
+									<p:column headerText="Mensaje" style="text-align:center;">
+										<p:inputText value="#{b.comentario}" readonly="true">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+
+									<p:column headerText="Observaciones" style="text-align:center;">
+										<p:inputText value="#{b.comentarioRecibe}">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+
+								</p:dataTable>
+							</p:panelGrid>
+
+							<p:toolbar id="btnPan">
+								<f:facet name="right">
+									<form id="botonesTPS">
+										<p:commandButton value="Cancelar" process="@this"
+											icon="ui-icon-circle-close" global="false"
+											action="#{panXSucursalMB.limpiar}"
+											style="float:right !important;margin:2px 2px 3px 2px;" />
+
+										<p:commandButton value="Imprimir" icon="ui-icon-print"
+											onclick="form.target='_blank'" ajax="false"
+											action="#{panXSucursalMB.reporteTipoPan}" global="false"
+											process="@form"
+											style="float:right !important;margin:2px 2px 3px 2px;" />
+
+										<p:commandButton value="Guardar" process="@form"
+											icon="ui-icon-disk" global="false"
+											action="#{panXSucursalMB.guardarSucrusal()}" update="@form"
+											style="float:right !important;margin:2px 2px 3px 2px;" />
+									</form>
+								</f:facet>
+							</p:toolbar>
+
+						</p:panelGrid>
+
+					</p:tab>
+
+
+					<p:tab title="Detalle">
+						<p:panelGrid columns="1">
+							<p:panel>
+								<p:outputLabel for="fecha" value="Fecha a Consultar:"
+									style="font-weight:bold;" />
+								<p:calendar id="fecha" value="#{panXSucursalMB.fechaConsulta}"
+									locale="es" pattern="dd-MM-yyyy" />
+								<p:message for="fecha" />
+							</p:panel>
+
+							<p:dataTable var="car" value="#{panXSucursalMB.lista}"
+								sortBy="#{car.id.idUbicacion}" expandableRowGroups="true"
+								sortOrder="DESCENDING" rowIndexVar="idis" id="tablaDetalle"
+								widgetVar="tablaDetalle">
+								<p:headerRow>
+									<p:column colspan="5">
+										<h:outputText
+											value="#{car.catUbicacion.descripcion} -- Recibido por: #{car.recibe}" />
+									</p:column>
+								</p:headerRow>
+								<p:column headerText="Operaciones" style="text-align:center;"
+									width="100">
+									<p:menuButton value="Menú">
+										<p:menuitem actionListener="#{panXSucursalMB.editar(car)}"
+											icon="ui-icon-pencil" title="Editar" value="Editar" rendered="false"
+											oncomplete="PF('dlgEditar').show()" update=":formEditar"
+											process="@this" />
+
+									</p:menuButton>
+								</p:column>
+
+								<p:column headerText="Tipo pan">
+									<h:outputText value="#{car.catTipoPan.descripcion}" />
+								</p:column>
+								<p:column headerText="Cantidad">
+									<h:outputText value="#{car.cantidad}" />
+								</p:column>
+								<p:column headerText="Costo">
+									<h:outputText value="#{car.catTipoPan.costo}" />
+								</p:column>
+								<p:column headerText="Notas">
+									<h:outputText value="#{car.comentario}" />
+								</p:column>
+								<p:column headerText="Comentario">
+									<h:outputText value="#{car.comentarioRecibe}" />
+								</p:column>
+
+							</p:dataTable>
+						</p:panelGrid>
+
+						<p:toolbar id="btnPanD">
+							<f:facet name="right">
+								<form id="botonesTPS">
+
+									<p:commandButton value="Cancelar" process="@this"
+										icon="ui-icon-circle-close" global="false"
+										action="#{panXSucursalMB.limpiar}"
+										style="float:right !important;margin:2px 2px 3px 2px;" />
+
+									<p:commandButton value="Consultar" process="@this,fecha"
+										icon="ui-icon-search" global="false"
+										action="#{panXSucursalMB.consultarXFecha}"
+										update=":principal:tabs:tablaDetalle"
+										style="float:right !important;margin:2px 2px 3px 2px;" />
+
+
+								</form>
+							</f:facet>
+						</p:toolbar>
+
+					</p:tab>
+
+				</p:tabView>
+
+			</h:form></section>
+
+		</div>
+
+
+		<p:dialog header="Actualizar Relación de Pan" appendTo="@(body)"
+			dynamic="true" showEffect="scale" hideEffect="clip" width="auto"
+			height="170" modal="true" widgetVar="dlgEditar" resizable="false">
+			<h:form id="formEditar">
+
+				<h:panelGrid columns="1">
+					<h:panelGrid columns="6" style="width:100%">
+						<p:outputLabel for="tipo" value="Tipo Pan: " />
+						<h:outputText id="tipo"
+							value="#{panXSucursalMB.panXSucursal.catTipoPan.descripcion}" />
+						<p:message for="tipo" />
+
+						<p:outputLabel for="can" value="Cantidad"
+							style="font-weight:bold;" />
+						<p:inputText id="can"
+							value="#{panXSucursalMB.panXSucursal.cantidad}" required="true"
+							requiredMessage="Debe ingresar una cantidad" size="5"
+							onkeypress="return SoloNumeros(e)" maxlength="3" />
+						<p:message for="can" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:outputLabel for="comentae" value="Comentario:"
+							style="font-weight:bold;" />
+						<p:inputTextarea id="comentae" rows="4" cols="120"
+							value="#{panXSucursalMB.panXSucursal.comentario}"
+							autoResize="false" style="resize: none" />
+						<p:message for="comentae" />
+					</h:panelGrid>
+
+				</h:panelGrid>
+
+				<p:toolbar>
+
+					<f:facet name="right">
+
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							process="@this" onclick="PF('dlgEditar').hide();" />
+						<p:commandButton value="Guardar" icon="ui-icon-disk" id="act"
+							actionListener="#{panXSucursalMB.guardar(2)}"
+							oncomplete="if (!args.validationFailed){PF('dlgEditar').hide();}"
+							update=":msgs :principal" />
+
+					</f:facet>
+
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
+

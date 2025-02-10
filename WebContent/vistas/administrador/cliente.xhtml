@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Cliente</ui:define>
+	<ui:define name="metadata" />
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				<small>Catálogo - Cliente</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-home"></i> Cliente</a></li>
+			</ol>
+			</section>
+			<p:growl id="msg" showDetail="true" autoUpdate="false" />
+			<section class="content"> <h:form id="principal">
+
+				<p:panel style="width:100%;">
+
+					<p:panelGrid columns="3">
+
+						<f:facet name="header">Cliente:</f:facet>
+
+						<p:outputLabel for="nombre" value="Nombre:"
+							style="font-weight:bold;" />
+						<p:inputText id="nombre" value="#{clienteMB.cliente.descripcion}"
+							required="true" requiredMessage="Debe ingresar un Nombre." />
+						<p:message for="nombre" />
+
+						<p:outputLabel for="direccion" value="Dirección:"
+							style="font-weight:bold;" />
+						<p:inputText id="direccion" value="#{clienteMB.cliente.direccion}"
+							required="true" requiredMessage="Debe ingresar una Dirección." />
+						<p:message for="direccion" />
+
+						<p:outputLabel for="telefono" value="Teléfono:"
+							style="font-weight:bold;" />
+						<p:inputMask id="telefono" value="#{clienteMB.cliente.telefono}"
+							mask="(999) 999-9999" required="true" />
+						<p:message for="telefono" />
+
+
+						<p:outputLabel for="correo" value="Correo:"
+							style="font-weight:bold;" />
+						<p:inputText id="correo" value="#{clienteMB.cliente.correo}"
+							required="true" requiredMessage="Debe ingresar un Correo." />
+						<p:message for="correo" />
+
+						<p:outputLabel for="rfc" value="RFC:" style="font-weight:bold;" />
+						<p:inputText id="rfc" value="#{clienteMB.cliente.rfc}"
+							maxlength="14" />
+						<p:message for="rfc" />
+
+						<f:facet name="footer">
+
+							<p:commandButton value="Cancelar"
+								actionListener="#{clienteMB.cancelar}"
+								oncomplete="PF('tbl').clearFilters(); PF('tbl').filter();"
+								update="principal" style="float:right;"
+								title="Cancelar Registro" />
+							<p:commandButton value="Guardar"
+								actionListener="#{clienteMB.guardar}" update="principal msg"
+								style="float:right;" title="Guardar Registro" />
+
+						</f:facet>
+
+					</p:panelGrid>
+
+					<br />
+
+					<p:contextMenu for="tbl">
+						<p:menuitem value="Editar" update="principal"
+							icon="ui-icon-pencil" actionListener="#{clienteMB.editar}"
+							process="tbl,@this" />
+						<p:menuitem value="Eliminar" update="tbl" icon="ui-icon-close"
+							actionListener="#{clienteMB.eliminar}" process="tbl,@this">
+							<p:confirm header="Confirmación" message="Eliminar cliente?"
+								icon="ui-icon-alert" />
+						</p:menuitem>
+					</p:contextMenu>
+
+					<p:dataTable id="tbl" widgetVar="tbl" value="#{clienteMB.lista}"
+						var="c" tableStyle="table-layout: auto;"
+						emptyMessage="Sin registros" paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+						selection="#{clienteMB.slcCliente}" selectionMode="single"
+						rowKey="#{c.id}" filteredValue="#{clienteMB.listaFilter}">
+
+						<f:facet name="header">Clientes Registrados</f:facet>
+
+						<p:column headerText="Nombre" style="text-align:center;"
+							filterBy="#{c.descripcion}" filterMatchMode="contains">
+							<h:outputText value="#{c.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Dirección" style="text-align:center;"
+							filterBy="#{c.direccion}" filterMatchMode="contains">
+							<h:outputText value="#{c.direccion}" />
+						</p:column>
+
+						<p:column headerText="Teléfono" style="text-align:center;"
+							filterBy="#{c.telefono}" filterMatchMode="contains">
+							<h:outputText value="#{c.telefono}" />
+						</p:column>
+
+						<p:column headerText="Correo" style="text-align:center;"
+							filterBy="#{c.correo}" filterMatchMode="contains">
+							<h:outputText value="#{c.correo}" />
+						</p:column>
+
+						<p:column headerText="RFC" style="text-align:center;"
+							filterBy="#{c.rfc}" filterMatchMode="contains">
+							<h:outputText value="#{c.rfc}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:form> </section>
+
+		</div>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode"
+			appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

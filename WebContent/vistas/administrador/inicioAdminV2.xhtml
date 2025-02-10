@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Punto de Venta</ui:define>
+	<ui:define name="metadata" />
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+
+			<section class="content-header">
+
+			<h1>
+				<h:outputText value="Total: #{registroVentaMB.total}" id="totalGen" />
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-dashboard"></i>inicio
+						Admin.</a></li>
+				<li class="active"></li>
+			</ol>
+
+			</section>
+
+			<!-- <p:messages autoUpdate="true" id="msg" showSummary="true"
+				showDetail="true" closable="true" /> -->
+
+			<p:growl id="msg" showDetail="true" autoUpdate="false" />
+
+
+			<div class="box box-primary">
+
+				<div class="box-body">
+
+
+					<h:form id="principal" prependId="false">
+
+						<p:carousel value="#{registroVentaMB.lista}" headerText="Custom"
+							var="car" itemStyle="height:100%;text-align:center"
+							numVisible="10" easing="easeOutBounce" circular="true"
+							responsive="true" rendered="false">
+
+							<p:panelGrid columns="1" style="width:100%;margin:10px 0px"
+								layout="grid" styleClass="ui-panelgrid-blank">
+
+
+								<f:facet name="header">
+									<h:commandLink>
+										<p:graphicImage
+											value="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/images/fotosPan/#{car.catTipoPan.imagen}"
+											height="80" rendered="true" />
+										<p:ajax id="aj2" listener="#{registroVentaMB.agrega(car)}"
+											update="principal" oncomplete="PF('dlgCantidad').show()" />
+										<!-- <p:ajax event="click" listener="#{tipoPanMB.agrega}" 
+									 oncomplete="PF('dlgCantidad').show()" update=":msg @form  :formCantidad" /> -->
+									</h:commandLink>
+								</f:facet>
+
+
+								<h:outputText value="#{car.catTipoPan.descripcion}" />
+
+
+								<h:outputText value="$#{car.catTipoPan.costo}" />
+							</p:panelGrid>
+
+							<f:facet name="footer">
+					                Variedad de pan: #{fn:length(registroVentaMB.lista)}.
+					        </f:facet>
+						</p:carousel>
+
+						<p:separator />
+						<p:dataGrid value="#{registroVentaMB.lista}" var="pan" columns="6"
+							layout="grid" rows="18" paginator="true" id="panSucursal"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="18,12,6">
+
+							<f:facet name="header">
+					           Tipos de pan en venta
+					        </f:facet>
+
+							<p:panel header="#{pan.catTipoPan.descripcion}"
+								style="text-align:center">
+								<h:panelGrid columns="1" style="width:100%">
+									<h:commandLink>
+										<p:graphicImage
+											value="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/images/fotosPan/#{pan.catTipoPan.imagen}"
+											height="80" rendered="true" />
+										<p:ajax id="aj2" listener="#{registroVentaMB.agrega(pan)}"
+											update=" :msg @form :formCantidad" oncomplete="PF('dlgCantidad').show()" />
+									</h:commandLink>									 
+									<h:outputText value="$ #{pan.catTipoPan.costo}" />
+
+
+								</h:panelGrid>
+							</p:panel>
+
+						</p:dataGrid>
+
+
+
+						<p:separator />
+						<p:panelGrid columns="1">
+							<f:facet name="header">
+								<h:outputText value="Articulos --- Venta"
+									style="font-size:16px; color:#2e857c; font-weight:bold;" />
+							</f:facet>
+
+							<p:dataTable value="#{registroVentaMB.articuloVenta}" var="b"
+								emptyMessage="Sin articulos en venta" id="tablaVenta"
+								widgetVar="tablaVenta"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+								rowsPerPageTemplate="5,10,20,50,100,500" paginator="true"
+								rows="10" filterDelay="2000">
+
+								<p:column headerText="Codigo" style="text-align:let;">
+									<h:outputText value="#{b.catTipoPan.codigo}" />
+								</p:column>
+
+								<p:column headerText="Descripción" style="text-align:center;">
+									<h:outputText value="#{b.catTipoPan.descripcion}" />
+								</p:column>
+
+								<p:column headerText="Costo" style="text-align:center;">
+									<h:outputText value="#{b.catTipoPan.costo}" />
+								</p:column>
+
+								<p:column headerText="Cantidad" style="text-align:center;">
+									<h:outputText value="#{b.cantVenta}" />
+								</p:column>
+
+								<p:column style="text-align:center;" headerText="Operaciones">
+									<p:commandButton icon="ui-icon-trash"
+										actionListener="#{registroVentaMB.eliminar(b)}"
+										process="@this" title="Eliminar"
+										update="tablaVenta :totalGen :msg">
+										<!--tablaVenta msg    -->
+										<p:confirm header="Confirmación"
+											message="Desea Eliminar el Pan?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</p:column>
+
+							</p:dataTable>
+						</p:panelGrid>
+
+						<p:toolbar>
+							<f:facet name="right">
+
+								<p:commandButton value="Limpiar" update=":msg @form "
+									icon="fa fa-ban" styleClass="ui-priority-primary"
+									actionListener="#{registroVentaMB.limpiarVenta}"
+									style="float:right !important;margin:2px 2px 3px 2px;width:80px;height:40px; border: 3px solid #999;" />
+
+								<p:commandButton value="Venta" icon="fa fa-money"
+									id="btnVenta2" rendered="#{registroVentaMB.mostrarVen}"
+									onclick="PF('dlgEfec').show()" styleClass="ui-priority-primary"
+									style="float:right !important;margin:2px 2px 3px 2px;width:80px;height:40px; border: 3px solid #999;">
+								</p:commandButton>
+
+
+							</f:facet>
+						</p:toolbar>
+
+					</h:form>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<p:dialog header="Cantidad" appendTo="@(body)" dynamic="true"
+			showEffect="scale" hideEffect="clip" modal="true" resizable="true"
+			widgetVar="dlgCantidad" id="dlgCantidad" styleClass="autoWidthDialog">
+			<h:form id="formCantidad">
+
+				<p:panelGrid columns="1" style="width:100%;">
+					<p:outputLabel for="can" value="Cantidad: "
+						style="font-weight:bold;" />
+					<p:inputNumber id="can" value="#{registroVentaMB.cantArticulo}"
+						style="width:250px;margin-left:-4px;" readonly="false"
+						required="true" onkeypress="return soloNumeros(event)"
+						minValue="1" requiredMessage="Debe seleccionar una Cantidad" />
+					<p:message for="can" />
+				</p:panelGrid>
+
+				<p:toolbar>
+					<f:facet name="right">
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							actionListener="#{registroVentaMB.cancelarArticulo}"
+							onclick="PF('dlgCantidad').hide()" process="@this"
+							update=":principal :msg"  />
+
+						<p:commandButton value="Guardar" icon="ui-icon-check"
+							actionListener="#{registroVentaMB.agregarArticulo}"
+							update=":msg  :totalGen   @form  :totalGen principal"
+							
+							oncomplete="if (!args.validationFailed){PF('dlgCantidad').hide()}" />
+
+					</f:facet>
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog header="Efectivo" appendTo="@(body)" dynamic="true"
+			showEffect="scale" hideEffect="clip" modal="true" resizable="true"
+			widgetVar="dlgEfec" id="dlgEfec" styleClass="autoWidthDialog">
+			<h:form id="formEfec">
+
+				<p:panelGrid columns="4" style="width:100%;">
+					<p:outputLabel for="tot" value="Total: "
+						style="font-weight:bold;" />
+					<p:outputLabel value="$ #{registroVentaMB.total}" id="tot"
+						style="font-weight:bold;font-size: 2em !important;" />
+					
+					<p:outputLabel for="cam" value="Cambio: "
+						style="font-weight:bold;" />
+					 <p:outputLabel value="$ #{registroVentaMB.cambio}" id="cam"
+						style="font-weight:bold;font-size: 2em !important;" />
+				</p:panelGrid>
+				
+				
+				<p:panelGrid columns="3" style="width:100%;">						
+					<p:outputLabel for="can" value="Efectivo: "
+						style="font-weight:bold;" />
+					<p:inputText id="can" value="#{registroVentaMB.efectivo}"
+						style="width:250px;margin-left:-4px;" readonly="false"
+						required="true" requiredMessage="Debe seleccionar una Cantidad">
+						<p:ajax event="blur" listener="#{registroVentaMB.cambioCalculo}"
+							update="cam" />
+					</p:inputText>
+					<p:message for="can" />
+				</p:panelGrid>
+
+				<p:toolbar>
+					<f:facet name="right">
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							onclick="PF('dlgEfec').hide()" process="@this" />
+
+						<p:commandButton value="Guardar" icon="ui-icon-check"
+							actionListener="#{registroVentaMB.guardarVenta}"
+							update="@form :msg :totalGen :principal"
+							oncomplete="if (!args.validationFailed){PF('dlgEfec').hide()}" />
+					</f:facet>
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode"
+			appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Usuario</ui:define>
+	<ui:define name="metadata" />
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				<small>Administración - Usuario</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-home"></i>Catalogo de
+						Usuarios</a></li>
+			</ol>
+			</section>
+			<p:messages autoUpdate="true" id="msgs" showSummary="true"
+				showDetail="true" closable="true" />
+			<section class="content"> <h:form id="principal">
+
+				<p:panel style="width:100%;">
+
+					<p:panelGrid columns="3">
+
+						<f:facet name="header">Usuario:</f:facet>
+
+						<p:outputLabel for="nombre" value="Nombre:"
+							style="font-weight:bold;" />
+						<p:inputText id="nombre" value="#{usuarioMB.usuario.descripcion}"
+							required="true" requiredMessage="Debe ingresar un nombre." />
+						<p:message for="nombre" />
+
+						<p:outputLabel for="pass" value="Constraseña:"
+							style="font-weight:bold;" />
+						<p:password id="pass" value="#{usuarioMB.usuario.contrasenia}"
+							required="true" requiredMessage="Debe ingresar una Contraseña" />
+						<p:message for="pass" />
+
+
+						<p:outputLabel for="telefono" value="Teléfono:"
+							style="font-weight:bold;" />
+						<p:inputMask id="telefono" value="#{usuarioMB.usuario.telefono}"
+							mask="(999) 999-9999" required="true" />
+						<p:message for="telefono" />
+
+
+						<p:outputLabel for="correo" value="Correo:"
+							style="font-weight:bold;" />
+						<p:inputText id="correo" value="#{usuarioMB.usuario.correo}"
+							required="true" requiredMessage="Debe ingresar un Correo" />
+						<p:message for="correo" />
+
+
+						<p:outputLabel for="perfil" value="Perfil:"
+							style="font-weight:bold;" />
+						<p:selectOneMenu id="perfil" value="#{usuarioMB.doPerfil}"
+							required="true" requiredMessage="Debe seleccionar un Perfil.">
+							<f:selectItems value="#{usuarioMB.listaPerfil}" var="uA"
+								itemLabel="#{uA.descripcion}" itemValue="#{uA.id}" />
+						</p:selectOneMenu>
+						<p:message for="perfil" />
+
+						<p:outputLabel for="sucur" value="Ubicación:"
+							style="font-weight:bold;" />
+						<p:selectOneMenu id="sucur" value="#{usuarioMB.doUbicacion}"
+							required="true" requiredMessage="Debe seleccionar una sucursal.">
+							<f:selectItems value="#{usuarioMB.listaUbicacion}" var="uA"
+								itemLabel="#{uA.descripcion}" itemValue="#{uA.id}" />
+						</p:selectOneMenu>
+						<p:message for="sucur" />
+						
+						<p:outputLabel for="turno" value="Turno:"
+							style="font-weight:bold;" />
+						<p:selectOneMenu id="turno" value="#{usuarioMB.usuario.turno}">
+		                    <f:selectItem itemLabel="Matutino" itemValue="1"/>
+		                    <f:selectItem itemLabel="Vespertino" itemValue="2"/>
+		                    <f:selectItem itemLabel="Sin turno" itemValue="3"/>
+		                    
+		                </p:selectOneMenu>
+						<p:message for="turno" />
+
+
+
+						<f:facet name="footer">
+
+							<p:commandButton value="Cancelar"
+								actionListener="#{usuarioMB.cancelar}"
+								oncomplete="PF('tbl').clearFilters(); PF('tbl').filter();"
+								update="principal" style="float:right;"
+								title="Cancelar Registro" />
+							<p:commandButton value="Guardar"
+								actionListener="#{usuarioMB.guardar}" update="principal"
+								style="float:right;" title="Guardar Registro" />
+
+						</f:facet>
+
+					</p:panelGrid>
+
+					<br />
+
+					<p:contextMenu for="tbl">
+						<p:menuitem value="Editar" update="principal"
+							icon="ui-icon-pencil" actionListener="#{usuarioMB.editar}"
+							process="tbl,@this" />
+						<p:menuitem value="Eliminar" update="principal"
+							icon="ui-icon-close" actionListener="#{usuarioMB.eliminar}"
+							process="tbl,@this">
+							<p:confirm header="Confirmación" message="Eliminar Usuario?"
+								icon="ui-icon-alert" />
+						</p:menuitem>
+					</p:contextMenu>
+
+					<p:dataTable id="tbl" widgetVar="tbl" value="#{usuarioMB.lista}"
+						var="p" tableStyle="table-layout: auto;"
+						emptyMessage="Sin registros" paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+						rowsPerPageTemplate="5,10,20,50,100,500" rowIndexVar="indice"
+						selection="#{usuarioMB.slcUsuario}" selectionMode="single"
+						rowKey="#{p.id}" filteredValue="#{usuarioMB.listaFilter}">
+
+						<f:facet name="header">Usuarios Registrados</f:facet>
+
+						<p:column headerText="Nombre" style="text-align:center;"
+							filterBy="#{p.descripcion}" filterMatchMode="contains">
+							<h:outputText value="#{p.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Perfil" style="text-align:center;"
+							filterBy="#{p.catPerfil.descripcion}" filterMatchMode="contains">
+							<h:outputText value="#{p.catPerfil.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Correo" style="text-align:center;"
+							filterBy="#{p.correo}" filterMatchMode="contains">
+							<h:outputText value="#{p.correo}" />
+						</p:column>
+
+						<p:column headerText="Teléfono" style="text-align:center;"
+							filterBy="#{p.telefono}" filterMatchMode="contains">
+							<h:outputText value="#{p.telefono}" />
+						</p:column>
+
+						<p:column headerText="Sucursal" style="text-align:center;"
+							filterBy="#{p.catUbicacion.descripcion}"
+							filterMatchMode="contains">
+							<h:outputText value="#{p.catUbicacion.descripcion}" />
+						</p:column>
+
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</h:form> </section>
+		</div>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode"
+			appendTo="@(body)">
+			<h:form>
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>
+

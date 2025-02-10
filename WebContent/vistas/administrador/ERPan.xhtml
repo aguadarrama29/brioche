@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/plantilla/plantilla.xhtml">
+
+	<ui:define name="tituloPag">Distribuir</ui:define>
+	<ui:define name="metadata" />
+
+	<ui:define name="content">
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				DISTRIBUIR A SUCURSALES -- <small><h:outputLabel id="nick"
+						value="#{userSession.usuario.descripcion}" /></small>
+			</h1>
+			</section>
+
+			<p:messages autoUpdate="true" id="msg2" showSummary="true"
+				showDetail="true" closable="true" />
+
+			<p:growl id="msg" showDetail="true" autoUpdate="false" />
+
+			<div class="box box-primary">
+
+				<div class="box-body">
+
+
+					<h:form id="principal">
+						<p:tabView activeIndex="#{distribuirMB.index}" id="tabs">
+							<p:ajax event="tabChange" listener="#{distribuirMB.onTabChange}"
+								update="@form" />
+							<p:tab title="Distribuir">
+								<p:panelGrid id="panelPrincipal" columns="1" style="width:100%;">
+
+									<h:panelGrid columns="9" style="width:100%">
+									    
+									    <p:outputLabel for="tipoc" value="Tipo:"
+											style="font-weight:bold;" />
+
+										<p:selectOneMenu id="tipoc"
+											value="#{distribuirMB.tipoAccion}" required="true"
+											requiredMessage="Debe seleccionar un tipo de acción.">
+											<p:ajax event="change" update="principal" listener="#{distribuirMB.accionTipo}"/>
+											<f:selectItem itemValue="#{null}" noSelectionOption="true" />
+											<f:selectItem itemLabel="Inicial" itemValue="1" />
+                                            <f:selectItem itemLabel="Ajuste" itemValue="2" />
+										</p:selectOneMenu>
+										<p:message for="tipoc" />
+										
+										<p:outputLabel for="sucursal" value="Sucursal:"
+											style="font-weight:bold;" />
+
+										<p:selectOneMenu id="sucursal"
+											value="#{distribuirMB.catUbicacion}" required="true"
+											requiredMessage="Debe seleccionar una Sucursal."
+											converter="#{ubicacionConverter}">
+											<p:ajax event="change" listener="#{distribuirMB.sucursal}" update="tablaVenta"/>
+											<f:selectItem itemValue="#{null}" noSelectionOption="true" />
+											<f:selectItems value="#{distribuirMB.listaSucursales}"
+												var="uA" itemLabel="#{uA.descripcion}" itemValue="#{uA}" />
+										</p:selectOneMenu>
+										<p:message for="sucursal" />
+
+										<p:outputLabel for="res2" value="Realiza:"
+											style="font-weight:bold;" />
+										<p:inputText id="res2"
+											value="#{userSession.usuario.descripcion}" required="false"
+											requiredMessage="Debe ingresar quien recibe" size="50"
+											readonly="true" />
+										<p:message for="res2" />
+
+									</h:panelGrid>
+									
+									<p:toolbar id="btnPan">
+										<f:facet name="right">
+											<form id="botonesTPS">
+												<p:commandButton value="Cancelar" process="@this"
+													icon="ui-icon-circle-close" global="false"
+													action="#{distribuirMB.limpiar}"
+													style="float:right !important;margin:2px 2px 3px 2px;" />
+
+												<p:commandButton value="Imprimir" icon="ui-icon-print"
+													onclick="form.target='_blank'" ajax="false"
+													action="#{distribuirMB.reporteTipoPan}" global="false"
+													style="float:right !important;margin:2px 2px 3px 2px;"
+													rendered="false" />
+
+												<p:commandButton value="Guardar" process="@form"
+													icon="ui-icon-disk" global="false"
+													style="float:right !important;margin:2px 2px 3px 2px;"
+													action="#{distribuirMB.guardarPanSucursal()}"
+													update="@form :msg" />
+											</form>
+										</f:facet>
+									</p:toolbar>
+
+									<p:panelGrid columns="1">
+										<f:facet name="header">
+											<h:outputText value="Registros"
+												style="font-size:20px; color:#2e857c; font-weight:bold;" />
+										</f:facet>
+										<p:dataTable value="#{distribuirMB.lista}" var="b"
+											emptyMessage="Sin articulos en venta" id="tablaVenta"
+											widgetVar="tablaVenta"
+											paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+											currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+											rowsPerPageTemplate="5,10,20,50,100,500" paginator="true"
+											rows="10">
+
+											<p:column headerText="Descripción" style="text-align:center;">
+												<h:outputText value="#{b.descripcion}" />
+											</p:column>
+
+											<p:column headerText="Cantidad" style="text-align:center;">
+												<p:inputText value="#{b.cantidad}" size="15" >
+												</p:inputText>
+											</p:column>
+
+											<p:column headerText="Observaciones"
+												style="text-align:center;">
+												<p:inputText value="#{b.comentaDistribu}" size="15">
+													<p:ajax />
+												</p:inputText>
+											</p:column>
+
+										</p:dataTable>
+									</p:panelGrid>
+
+								</p:panelGrid>
+
+							</p:tab>
+
+
+							<p:tab title="Detalle">
+								<p:panelGrid columns="1">
+
+									<h:panelGrid columns="6" style="width:100%">
+										<p:outputLabel for="fechaConsulta" value="Fecha Compromiso:"
+											style="font-weight:bold;" />
+										<p:calendar id="fechaConsulta"
+											value="#{distribuirMB.fecCompromiso}" locale="es"
+											pattern="yyyy-MM-dd" />
+										<p:message for="fechaConsulta" />
+
+										<p:outputLabel for="sucursalRev" value="Sucursal:"
+											style="font-weight:bold;" />
+										<p:selectOneMenu id="sucursalRev"
+											value="#{distribuirMB.catUbicacion}" required="true"
+											requiredMessage="Debe seleccionar una Sucursal."
+											converter="#{ubicacionConverter}">
+
+											<f:selectItems value="#{distribuirMB.listaSucursales}"
+												var="uA" itemLabel="#{uA.descripcion}" itemValue="#{uA}" />
+										</p:selectOneMenu>
+										<p:message for="sucursalRev" />
+
+									</h:panelGrid>
+
+									<p:dataTable var="car" value="#{distribuirMB.listaPrevio}"
+										sortBy="#{car.id.idUbicacion}" expandableRowGroups="true"
+										sortOrder="DESCENDING" rowIndexVar="idis" id="tablaDetalle"
+										widgetVar="tablaDetalle">
+										<p:headerRow>
+											<p:column colspan="7">
+												<h:outputText
+													value="#{car.catUbicacion.descripcion}  Distribuido por: #{car.entrega}" />
+											</p:column>
+										</p:headerRow>
+										<p:column headerText="Operaciones" style="text-align:center;"
+											width="100">
+											<p:menuButton value="Menú">
+												<p:menuitem actionListener="#{distribuirMB.editar(car)}"
+													icon="ui-icon-pencil" title="Editar" value="Editar"
+													oncomplete="PF('dlgEditar').show()" update=":formEditar"
+													process="@this" />
+
+											</p:menuButton>
+										</p:column>
+
+										<p:column headerText="Tipo pan">
+											<h:outputText value="#{car.catTipoPan.descripcion}" />
+										</p:column>
+										<p:column headerText="Cantidad">
+											<h:outputText value="#{car.cantidad}" />
+										</p:column>
+										<p:column headerText="Costo">
+											<h:outputText value="#{car.catTipoPan.costo}" />
+										</p:column>
+										<p:column headerText="Subtotal">
+											<h:outputText value="#{car.catTipoPan.costo * car.cantidad}" />
+										</p:column>
+										<p:column headerText="Estatus">
+											<h:outputText value="Entregado" rendered="#{car.estatus eq 1}"/>
+											<h:outputText value="Recibido" rendered="#{car.estatus eq 2}"/>
+										</p:column>
+										<p:column headerText="Comentario">
+											<h:outputText value="#{car.comentario}" />
+										</p:column>
+
+										<p:summaryRow >
+											<p:column colspan="4" style="text-align:right font-weight:bold;font-size: 2em !important;">
+												<h:outputText value="Total Venta:" />
+											</p:column>
+											<p:column style="text-align:right font-weight:bold;font-size: 2em !important;">
+												<h:outputText value="#{distribuirMB.totalVenta}">
+													<f:convertNumber type="currency" currencySymbol="$" />
+												</h:outputText>
+											</p:column>
+										</p:summaryRow>
+
+									</p:dataTable>
+								</p:panelGrid>
+
+								<p:toolbar id="btnPanV">
+									<f:facet name="right">
+										<form id="botonesE">
+											<p:commandButton value="Cancelar" process="@this"
+												icon="ui-icon-circle-close" global="false"
+												action="#{distribuirMB.limpiar}"
+												style="float:right !important;margin:2px 2px 3px 2px;" />
+
+											<p:commandButton value="Consultar" update="tablaDetalle"
+												icon="ui-icon-person" iconPos="right" global="false"
+												process="fechaConsulta sucursalRev @this"
+												actionListener="#{distribuirMB.cargaInvXsucursal}"
+												style="float:right !important;margin:2px 2px 3px 2px;" />
+
+
+										</form>
+									</f:facet>
+								</p:toolbar>
+
+							</p:tab>
+
+						</p:tabView>
+
+					</h:form>
+				</div>
+			</div>
+
+		</div>
+
+
+		<p:dialog header="Actualizar Relación de Pan" appendTo="@(body)"
+			dynamic="true" showEffect="scale" hideEffect="clip" width="auto"
+			height="170" modal="true" widgetVar="dlgEditar" resizable="false">
+			<h:form id="formEditar">
+
+				<h:panelGrid columns="1">
+					<h:panelGrid columns="6" style="width:100%">
+						<p:outputLabel for="tipo" value="Tipo Pan: " />
+						<h:outputText id="tipo"
+							value="#{distribuirMB.panXSucursal.catTipoPan.descripcion}" />
+						<p:message for="tipo" />
+
+						<p:outputLabel for="cantMomento" value="Cantidad al momento: " />
+						<h:outputText id="cantMomento"
+							value="#{distribuirMB.panXSucursal.cantidad}" />
+						<p:message for="cantMomento" />
+
+						<p:outputLabel for="@next" value="Tipo Movimiento: " />
+						<p:selectOneMenu id="option" value="#{distribuirMB.tipoMov}"
+							required="true">
+							<f:selectItem itemLabel="Seleccione una opcion.." itemValue="" />
+							<f:selectItem itemLabel="Alta" itemValue="1" />
+							<f:selectItem itemLabel="Baja" itemValue="2" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="can" value="Cantidad"
+							style="font-weight:bold;" />
+						<p:inputText id="can" value="#{distribuirMB.cantMov}"
+							required="true" requiredMessage="Debe ingresar una cantidad"
+							size="5" onkeypress="return soloNumeros(e)" maxlength="3" />
+						<p:message for="can" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:outputLabel for="comentae" value="Comentario:"
+							style="font-weight:bold;" />
+						<p:inputTextarea id="comentae" rows="4" cols="120"
+							value="#{distribuirMB.panXSucursal.comentario}"
+							autoResize="false" style="resize: none" required="true"
+							requiredMessage="Debe ingresar un comentario(justificación)" />
+						<p:message for="comentae" />
+					</h:panelGrid>
+
+				</h:panelGrid>
+
+				<p:toolbar>
+
+					<f:facet name="right">
+
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							process="@this" onclick="PF('dlgEditar').hide();" />
+						<p:commandButton value="Guardar" icon="ui-icon-disk" id="act"
+							actionListener="#{distribuirMB.actualizarRegDistribucion()}"
+							oncomplete="if (!args.validationFailed){PF('dlgEditar').hide();}"
+							update=":msg :principal" />
+
+					</f:facet>
+
+				</p:toolbar>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
+
