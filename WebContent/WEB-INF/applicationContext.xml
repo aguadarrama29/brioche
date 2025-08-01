@@ -20,10 +20,6 @@
 		<property name="username" value="brioche" />
 		<property name="password" value="Alf0ns02911" />
 		
-		<!--<property name="url" value="jdbc:postgresql://189.199.226.10:5432/panaderi_briocheprodb" /> 
-		<property name="username" value="panaderi_userapp" />
-		<property name="password" value="Alf0ns02911" /> -->
-		
 	</bean>
 
 	<bean id="defaulLobHandler"
