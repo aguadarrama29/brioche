@@ -82,10 +82,10 @@ public class RegistroVentaController implements Serializable {
 	@PostConstruct
 	public void inicio() {
 		
+		//dos lineas no van al ponerlo en el vps
 		PrintExamples.printAvailable();
 		nombreImpresora=PrintExamples.printDefault();
 		
-		this.imprimirTicketPrueba();
 		listaIni= new ArrayList<>();
 		listaPrevio = new ArrayList<>();
 		lista = new ArrayList<>();
