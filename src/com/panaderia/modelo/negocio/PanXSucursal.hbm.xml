@@ -65,5 +65,9 @@
         <property name="corteVespertino" type="int">
             <column name="corte_vespertino" not-null="true" />
         </property>
+        
+        <property generated="never" lazy="false" name="cantidadTemp" type="java.math.BigDecimal" unique="false">
+		    <column name="cantidad_tmp"/>
+		</property>
     </class>
 </hibernate-mapping>

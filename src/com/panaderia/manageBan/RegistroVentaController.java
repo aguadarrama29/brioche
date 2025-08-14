@@ -83,8 +83,8 @@ public class RegistroVentaController implements Serializable {
 	public void inicio() {
 		
 		//dos lineas no van al ponerlo en el vps
-		PrintExamples.printAvailable();
-		nombreImpresora=PrintExamples.printDefault();
+		/*PrintExamples.printAvailable();
+		nombreImpresora=PrintExamples.printDefault();*/
 		
 		listaIni= new ArrayList<>();
 		listaPrevio = new ArrayList<>();
@@ -697,6 +697,7 @@ public class RegistroVentaController implements Serializable {
 
 				// folio por año y sucursal suc-aaaa-00000000
 				Integer con = iBriocheServicio.consecutivoXAnioPrecio(userSession.getUsuario().getCatUbicacion().getId());
+				System.out.println("que tengo"+con);
 				String folio = "";
 				con++;
 				
@@ -705,7 +706,7 @@ public class RegistroVentaController implements Serializable {
 				int cadenaC = 8 - totalCon;
 				String conse = ceros(cadenaC) + con;
 				folio = userSession.getUsuario().getCatUbicacion().getId() + "-" + anio + "-" + conse;
-
+				System.out.println("que tengo"+folio);
 				folioVF = folio;
 				// recorrer la lista original
 				for (PrecioCantidadSucursal q : articuloVentaPrecio) {

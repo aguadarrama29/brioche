@@ -292,7 +292,7 @@
 
 		<p:dialog header="Efectivo" appendTo="@(body)" dynamic="true"
 			showEffect="scale" hideEffect="clip" modal="true" resizable="true"
-			widgetVar="dlgEfec" id="dlgEfec" styleClass="autoWidthDialog">
+			widgetVar="dlgEfec" id="dlgEfec" styleClass="autoWidthDialog" width="500" >
 			<h:form id="formEfec">
 
 				<p:panelGrid columns="4" style="width:100%;">
@@ -311,7 +311,7 @@
 						style="font-weight:bold;" />
 					<p:inputText id="can" value="#{registroVentaMB.efectivo}"
 						style="width:250px;margin-left:-4px;" readonly="false"
-						required="true" requiredMessage="Debe seleccionar una Cantidad">
+						required="true" requiredMessage="Debe seleccionar una Cantidad" converter="zeroToEmptyConverter">
 						<p:ajax event="keyup" listener="#{registroVentaMB.cambioCalculo}"
 							update="cam" />
 					</p:inputText>
@@ -363,10 +363,14 @@
 				<p:panelGrid columns="1" style="width:100%;">
 					<p:outputLabel for="can" value="Cantidad: "
 						style="font-weight:bold;" />
-					<p:inputNumber id="can" value="#{registroVentaMB.cantArticulo}"
-						style="width:250px;margin-left:-4px;" readonly="false"
-						required="true" onkeypress="return soloNumeros(event)"
-						minValue="1" requiredMessage="Debe seleccionar una Cantidad" />
+					<p:spinner id="can" 
+				           value="#{registroVentaMB.cantArticulo}" 
+				           min="1" 
+				           max="1000" 
+				           step="1" 
+				           style="width:150px;">
+				           <f:validator validatorId="cantArticuloValidator"/>
+				     </p:spinner>
 					<p:message for="can" />
 				</p:panelGrid>
 

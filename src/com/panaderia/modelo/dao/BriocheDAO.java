@@ -1297,7 +1297,7 @@ public class BriocheDAO implements Serializable, IBriocheDAO {
 		return query.list();
 	}
 	
-	@Override
+	/*@Override
 	public int consecutivoXAnioPrecio(int cveUbica) {
 
 		Calendar cal = Calendar.getInstance();
@@ -1320,6 +1320,45 @@ public class BriocheDAO implements Serializable, IBriocheDAO {
 		int obs = (Integer) query.uniqueResult();
 		session.close();
 		return obs;
+	}*/
+	
+	
+	@Override
+	public int consecutivoXAnioPrecio(int cveUbica) {
+	    Calendar inicio = Calendar.getInstance();
+	    inicio.set(Calendar.MONTH, Calendar.JANUARY);
+	    inicio.set(Calendar.DAY_OF_MONTH, 1);
+	    inicio.set(Calendar.HOUR_OF_DAY, 0);
+	    inicio.set(Calendar.MINUTE, 0);
+	    inicio.set(Calendar.SECOND, 0);
+	    inicio.set(Calendar.MILLISECOND, 0);
+
+	    Calendar fin = Calendar.getInstance();
+	    fin.set(Calendar.MONTH, Calendar.DECEMBER);
+	    fin.set(Calendar.DAY_OF_MONTH, 31);
+	    fin.set(Calendar.HOUR_OF_DAY, 23);
+	    fin.set(Calendar.MINUTE, 59);
+	    fin.set(Calendar.SECOND, 59);
+	    fin.set(Calendar.MILLISECOND, 999);
+
+	    Session session = sessionFactory.openSession();
+	    String stringQuery;
+	    Query query;
+	    stringQuery = "SELECT COALESCE(MAX(o.consecutivo), 0) " +
+	                  "FROM PrecioCantidadVenta o " +
+	                  "WHERE o.fecha BETWEEN :inicio AND :fin " +
+	                  "AND o.idUbicacion = :uni";
+
+	    query = session.createQuery(stringQuery);
+	    query.setParameter("inicio", inicio.getTime());
+	    query.setParameter("fin", fin.getTime());
+	    query.setParameter("uni", cveUbica);
+
+	    Integer obs = (Integer) query.uniqueResult();
+	    session.close();
+
+	    return obs != null ? obs : 0;
 	}
+
 
 }

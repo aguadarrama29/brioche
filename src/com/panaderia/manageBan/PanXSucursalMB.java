@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,6 +96,9 @@ public class PanXSucursalMB implements Serializable{
 		 System.out.println("llegoo"+index);
 		 if(index==1) {
 			lista = getiBriocheServicio().obtenerPanXSucursalesXFecha(fechaActual,3,userSession.getUsuario().getCatUbicacion().getId());
+			
+			//se agrega para tner info de cantidad ahra se vende asi
+			listaPrevioPrecio=getiBriocheServicio().obtenerPrecioXSucursalesXFecha(fechaActual, 3, userSession.getUsuario().getCatUbicacion().getId());
 		 }
 	       
 	 }
@@ -282,6 +286,11 @@ public class PanXSucursalMB implements Serializable{
 		
 		return enviado2;
 		
+	}
+	
+	public BigDecimal existenciaFisica(int cantidad,BigDecimal tempo) {
+		System.out.println("que llega"+cantidad+"   "+tempo);
+	    return tempo.add(new BigDecimal(cantidad));
 	}
 	
 	

@@ -1,5 +1,7 @@
 package com.panaderia.modelo.negocio;
 
+import java.math.BigDecimal;
+
 // Generated 14/06/2024 01:01:41 PM by Hibernate Tools 5.3.0.Beta2
 
 /**
@@ -16,6 +18,8 @@ public class PrecioCantidadSucursal implements java.io.Serializable {
 	private Integer cantidad;
 	private Integer cantidadVendida;
 	private Integer estatus;
+	private BigDecimal cantidadTemp;
+	
 	
 
 	public PrecioCantidadSucursal() {
@@ -85,6 +89,14 @@ public class PrecioCantidadSucursal implements java.io.Serializable {
 
 	public void setEstatus(Integer estatus) {
 		this.estatus = estatus;
+	}
+
+	public BigDecimal getCantidadTemp() {
+		return cantidadTemp;
+	}
+
+	public void setCantidadTemp(BigDecimal cantidadTemp) {
+		this.cantidadTemp = cantidadTemp;
 	}
 
 }

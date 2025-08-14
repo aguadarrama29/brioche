@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -208,8 +209,10 @@ public class DistribuirPanMB implements Serializable {
 					panXSucursal.getId().setCodigopan(pan.getCodigo());
 					panXSucursal.getId().setIdUbicacion(idSucursal);// catUbicacion.getId()
 					panXSucursal.getId().setFecha(fechaActual);
-
 					panXSucursal.setCatTipoPan(pan);
+					
+					BigDecimal tmctipo= new BigDecimal(pan.getCantidad());
+					panXSucursal.setCantidadTemp(tmctipo);
 
 					CatUbicacion cat = new CatUbicacion();
 					cat.setId(idSucursal);
@@ -232,6 +235,8 @@ public class DistribuirPanMB implements Serializable {
 					precioCSucursal.setId(pcid);
 					precioCSucursal.setCantidad(pan.getCantidad());
 					precioCSucursal.setCantidadVendida(pan.getCantidad());
+					BigDecimal tmc= new BigDecimal(pan.getCantidad());
+					precioCSucursal.setCantidadTemp(tmc);
 					precioCSucursal.setCatUbicacion(cat);
 					precioCSucursal.setEstatus(1);
 					
@@ -253,7 +258,8 @@ public class DistribuirPanMB implements Serializable {
 					existenciaF=panExiste.getCantidad()+pansuc.getCantidad();
 					existeTP=panExiste.getCantidadTPXDia()+pansuc.getCantidad();
 					pansuc.setCantidad(existenciaF);		
-					pansuc.setCantidadTPXDia(existeTP);					
+					pansuc.setCantidadTPXDia(existeTP);	
+					
 					getiBriocheServicio().actualizarPanXSucursal(pansuc);
 				}else {
 					getiBriocheServicio().guardarPanXSucursal(pansuc);
@@ -276,7 +282,8 @@ public class DistribuirPanMB implements Serializable {
 					existenciaInicial=panExistePrecio.getCantidad()+pcs.getCantidad();
 					existeVendida=panExistePrecio.getCantidadVendida()+pcs.getCantidad();
 					pcs.setCantidad(existenciaInicial);		
-					pcs.setCantidadVendida(existeVendida);					
+					pcs.setCantidadVendida(existeVendida);
+					
 					getiBriocheServicio().actualizarPrecioCantidadSucursal(pcs);
 				}else {
 					getiBriocheServicio().guardarPrecioCantidadSucursal(pcs);

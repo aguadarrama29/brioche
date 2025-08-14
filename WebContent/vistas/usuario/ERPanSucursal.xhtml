@@ -43,10 +43,10 @@
 							</h:panelGrid>
 							
 							
-							<p:panelGrid columns="1" rendered="false">
+							<p:panelGrid columns="1" rendered="true">
 								<f:facet name="header">
-									<h:outputText value="Reumen X Precio"
-										style="font-size:16px; color:#ff00ff; font-weight:bold;" />
+									<h:outputText value="Enviado por Precio"
+										style="font-size:16px; color:#2e857c; font-weight:bold;" />
 								</f:facet>
 
 								<p:dataTable value="#{panXSucursalMB.listaPrevioPrecio}" var="bp"
@@ -61,8 +61,8 @@
 										<h:outputText value="#{bp.id.costo}" />
 									</p:column>
 									
-									<p:column headerText="Cantidad" style="text-align:center;">
-										<p:inputText value="#{bp.cantidad}" size="8" readonly="true">
+									<p:column headerText="Cantidad enviada" style="text-align:center;">
+										<p:inputText value="#{bp.cantidadTemp}" size="8" readonly="true">
 											<p:ajax />
 										</p:inputText>
 									</p:column>
@@ -73,8 +73,8 @@
 
 							<p:panelGrid columns="1">
 								<f:facet name="header">
-									<h:outputText value="Registros"
-										style="font-size:16px; color:#ff00ff; font-weight:bold;" />
+									<h:outputText value="Por tipo de Pan"
+										style="font-size:16px; color:#2e857c; font-weight:bold;" />
 								</f:facet>
 
 								<p:dataTable value="#{panXSucursalMB.listaPrevio}" var="b"
@@ -85,17 +85,17 @@
 									rowsPerPageTemplate="5,10,20,50,100,500" paginator="true"
 									rows="10" filterDelay="2000">
 
-									<p:column headerText="Tipo pan" style="text-align:center;">
+									<p:column headerText="Enviado" style="text-align:center;">
 										<h:outputText value="#{b.catTipoPan.descripcion}" />
 									</p:column>
 									
 									<p:column headerText="Enviado" style="text-align:center;">
-										<p:inputText value="#{panXSucursalMB.calculo(b)}" size="8" readonly="true">
+										<p:inputText value="#{b.cantidadTemp}" size="8" readonly="true">
 											<p:ajax />
 										</p:inputText>
 									</p:column>
 
-									<p:column headerText="Existencia en tienda" style="text-align:center;">
+									<p:column headerText="Existencia del Dia" style="text-align:center;">
 										<p:inputText value="#{b.cantidad}" size="8" readonly="true">
 											<p:ajax />
 										</p:inputText>
@@ -152,6 +152,12 @@
 									locale="es" pattern="dd-MM-yyyy" />
 								<p:message for="fecha" />
 							</p:panel>
+							
+							<f:facet name="header">
+									<h:outputText value="Resumen por tipo de pan"
+										style="font-size:16px; color:#2e857c; font-weight:bold;" />
+								</f:facet>
+								
 
 							<p:dataTable var="car" value="#{panXSucursalMB.lista}"
 								sortBy="#{car.id.idUbicacion}" expandableRowGroups="true"
@@ -177,7 +183,7 @@
 								<p:column headerText="Tipo pan">
 									<h:outputText value="#{car.catTipoPan.descripcion}" />
 								</p:column>
-								<p:column headerText="Cantidad">
+								<p:column headerText="Cantidad del Dia">
 									<h:outputText value="#{car.cantidad}" />
 								</p:column>
 								<p:column headerText="Costo">
@@ -191,6 +197,56 @@
 								</p:column>
 
 							</p:dataTable>
+							
+							
+							<p:panelGrid columns="1" rendered="true">
+								<f:facet name="header">
+									<h:outputText value="Resumen por Precio"
+										style="font-size:16px; color:#2e857c; font-weight:bold;" />
+								</f:facet>
+
+								<p:dataTable value="#{panXSucursalMB.listaPrevioPrecio}" var="bp"
+									emptyMessage="Sin articulos en venta" id="tablaVentapdp"
+									widgetVar="tablaVentapdp"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									currentPageReportTemplate="(Mostrando: {startRecord} - {endRecord} de: {totalRecords}, Página: {currentPage}/{totalPages})"
+									rowsPerPageTemplate="5,10,20,50,100,500" paginator="true"
+									rows="10" filterDelay="2000" >
+
+									<p:column headerText="Precio" style="text-align:center;">
+										<h:outputText value="#{bp.id.costo}" />
+									</p:column>
+									
+									<p:column headerText="Cantidad en tienda" style="text-align:center;">
+										<p:inputText value="#{bp.cantidadVendida}" size="8" readonly="true">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+									
+									<p:column headerText="Cantidad vendida" style="text-align:center;">
+										<p:inputText value="#{bp.cantidad-bp.cantidadVendida}" size="8" readonly="true">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+									
+									
+									<p:column headerText="Cantidad por dia" style="text-align:center;">
+										<p:inputText value="#{bp.cantidad}" size="8" readonly="true">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+									
+									<p:column headerText="Ultima cantidad enviada" style="text-align:center;">
+										<p:inputText value="#{bp.cantidadTemp}" size="8" readonly="true">
+											<p:ajax />
+										</p:inputText>
+									</p:column>
+									
+
+								</p:dataTable>
+							</p:panelGrid>
+							
+							
 						</p:panelGrid>
 
 						<p:toolbar id="btnPanD">
