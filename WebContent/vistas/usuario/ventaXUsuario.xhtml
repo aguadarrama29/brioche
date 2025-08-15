@@ -94,6 +94,10 @@
 						<h:outputText value="#{pp.cantidadTPXDia}" />
 					</p:column>
 					
+					<p:column headerText="Costo" style="text-align:center;" filterBy="#{p.catTipoPan.costo}" filterMatchMode="contains">
+						<h:outputText value="#{pp.catTipoPan.costo}" />
+					</p:column>
+					
 					<p:column headerText="Existencia" style="text-align:center;">
 						<p:inputText value="#{pp.corteMatutino}" size="15" rendered="#{reporteUsuario.turno eq 1}"/>
 						<p:inputText value="#{pp.corteVespertino}" size="15" rendered="#{reporteUsuario.turno eq 2}"/>

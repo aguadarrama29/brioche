@@ -21,8 +21,10 @@
 			</h1>
 			</section>
 
-			<p:messages autoUpdate="true" id="msgs" showSummary="true"
+			<p:messages autoUpdate="true" id="msg2" showSummary="true"
 				showDetail="true" closable="true" />
+
+			<p:growl id="msg" showDetail="true" autoUpdate="false" />
 
 			<section class="content"> <h:form id="principal">
 
@@ -319,7 +321,7 @@
 						<p:commandButton value="Guardar" icon="ui-icon-disk" id="act"
 							actionListener="#{panXSucursalMB.guardar(2)}"
 							oncomplete="if (!args.validationFailed){PF('dlgEditar').hide();}"
-							update=":msgs :principal" />
+							update=" @form :msg" />
 
 					</f:facet>
 

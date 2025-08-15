@@ -57,7 +57,7 @@ public class ReporteVentaMB implements Serializable{
 	private boolean estatus=true;
 	
 	private Date fechaActual = new Date();	
-	private int idUsuario=userSession.getUsuario().getId();
+	//private int idUsuario=userSession.getUsuario().getId();
 	
 
 	public ReporteVentaMB() {

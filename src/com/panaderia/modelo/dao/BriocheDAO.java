@@ -589,28 +589,46 @@ public class BriocheDAO implements Serializable, IBriocheDAO {
 
 	@Override
 	public int consecutivoXAnio(int cveUbica) {
+	    try {
+	        Calendar calInicio = Calendar.getInstance();
+	        calInicio.set(Calendar.MONTH, Calendar.JANUARY);
+	        calInicio.set(Calendar.DAY_OF_MONTH, 1);
+	        calInicio.set(Calendar.HOUR_OF_DAY, 0);
+	        calInicio.set(Calendar.MINUTE, 0);
+	        calInicio.set(Calendar.SECOND, 0);
+	        calInicio.set(Calendar.MILLISECOND, 0);
+	        Date fechaInicio = calInicio.getTime();
 
-		Calendar cal = Calendar.getInstance();
-		// cal.setTime(fecha);
-		int anio = cal.get(Calendar.YEAR);
-		int mes = cal.get(Calendar.MONTH) + 1;
-		int dia = cal.get(Calendar.DAY_OF_MONTH);
-		int hora = cal.get(Calendar.HOUR);
+	        Calendar calFin = Calendar.getInstance();
+	        calFin.set(Calendar.MONTH, Calendar.DECEMBER);
+	        calFin.set(Calendar.DAY_OF_MONTH, 31);
+	        calFin.set(Calendar.HOUR_OF_DAY, 23);
+	        calFin.set(Calendar.MINUTE, 59);
+	        calFin.set(Calendar.SECOND, 59);
+	        calFin.set(Calendar.MILLISECOND, 999);
+	        Date fechaFin = calFin.getTime();
 
-		Session session = sessionFactory.openSession();
-		String stringQuery;
-		Query query;
-		stringQuery = "SELECT COALESCE(MAX(o.consecutivo), 0) FROM RegistroVenta o WHERE YEAR(o.fecha)= :anio AND"
-				+ " o.catUbicacion.id = :uni "; // AND HOUR(o.fecha) > :hora
-		query = session.createQuery(stringQuery);
-		query.setInteger("anio", anio);
-		query.setInteger("uni", cveUbica);
-		// query.setInteger("hora", hora);
+	        Session session = sessionFactory.openSession();
+	        String hql = "SELECT COALESCE(MAX(o.consecutivo), 0) " +
+	                     "FROM RegistroVenta o " +
+	                     "WHERE o.fecha >= :inicio AND o.fecha <= :fin " +
+	                     "AND o.catUbicacion.id = :uni";
 
-		int obs = (Integer) query.uniqueResult();
-		session.close();
-		return obs;
+	        Query query = session.createQuery(hql);
+	        query.setParameter("inicio", fechaInicio);
+	        query.setParameter("fin", fechaFin);
+	        query.setInteger("uni", cveUbica);
+
+	        int maxConsecutivo = ((Number) query.uniqueResult()).intValue();
+	        session.close();
+	        return maxConsecutivo;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return 0;
+	    }
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -653,227 +671,249 @@ public class BriocheDAO implements Serializable, IBriocheDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RegistroVenta> obtenerTotalVentaXDiaXSucursal(Date fecha,int idSucursal) {
-		
-		try {
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(fecha);
-			int anio = cal.get(Calendar.YEAR);
-			int mes = cal.get(Calendar.MONTH) + 1;
-			int dia = cal.get(Calendar.DATE);
-			int hora = cal.get(Calendar.HOUR);
+	public List<RegistroVenta> obtenerTotalVentaXDiaXSucursal(Date fecha, int idSucursal) {
+	    try {
+	        // Obtener rango de inicio y fin del día
+	        Calendar calInicio = Calendar.getInstance();
+	        calInicio.setTime(fecha);
+	        calInicio.set(Calendar.HOUR_OF_DAY, 0);
+	        calInicio.set(Calendar.MINUTE, 0);
+	        calInicio.set(Calendar.SECOND, 0);
+	        calInicio.set(Calendar.MILLISECOND, 0);
+	        Date fechaInicio = calInicio.getTime();
 
-			Session session = sessionFactory.openSession();
-			String stringQuery;
-			Query query;
-			
-			//System.out.println("quew ondaaadaooooo"+idSucursal+"***"+anio+"  "+mes+"diaa"+dia);
+	        Calendar calFin = Calendar.getInstance();
+	        calFin.setTime(fecha);
+	        calFin.set(Calendar.HOUR_OF_DAY, 23);
+	        calFin.set(Calendar.MINUTE, 59);
+	        calFin.set(Calendar.SECOND, 59);
+	        calFin.set(Calendar.MILLISECOND, 999);
+	        Date fechaFin = calFin.getTime();
 
-			//ingreso
-			if (idSucursal == 1) {
-				System.out.println("unoooo");
-				stringQuery = "FROM RegistroVenta o WHERE YEAR(o.fecha)= :anio "
-						+ " AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia ORDER BY o.id.folio"; // AND  HOUR(o.fecha) > :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-			} else {
-				System.out.println("dosss");
-				stringQuery = "FROM RegistroVenta o WHERE YEAR(o.fecha)= :anio "
-						+ "  AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia AND o.catUbicacion.id = :uni ORDER BY o.id.folio"; // AND HOUR(o.fecha) > :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-				query.setInteger("uni", idSucursal);
-			}
-			
-			return query.list();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	        Session session = sessionFactory.openSession();
+	        StringBuilder hql = new StringBuilder("FROM RegistroVenta o WHERE o.fecha >= :inicio AND o.fecha <= :fin ");
+
+	        if (idSucursal != 1) {
+	            hql.append("AND o.catUbicacion.id = :uni ");
+	        }
+
+	        hql.append("ORDER BY o.id.folio");
+
+	        Query query = session.createQuery(hql.toString());
+	        query.setParameter("inicio", fechaInicio);
+	        query.setParameter("fin", fechaFin);
+
+	        if (idSucursal != 1) {
+	            query.setInteger("uni", idSucursal);
+	        }
+
+	        List<RegistroVenta> ventas = query.list();
+	        session.close();
+	        return ventas;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
+
 	
 	@Override
-	public BigDecimal obtenerTotalVentaXDiaXTipo(Date fecha,int idSucursal) {
-		try {
+	public BigDecimal obtenerTotalVentaXDiaXTipo(Date fecha, int idSucursal) {
+	    try {
+	        // Rango de inicio y fin del día
+	        Calendar calInicio = Calendar.getInstance();
+	        calInicio.setTime(fecha);
+	        calInicio.set(Calendar.HOUR_OF_DAY, 0);
+	        calInicio.set(Calendar.MINUTE, 0);
+	        calInicio.set(Calendar.SECOND, 0);
+	        calInicio.set(Calendar.MILLISECOND, 0);
+	        Date fechaInicio = calInicio.getTime();
 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(fecha);
-			int anio = cal.get(Calendar.YEAR);
-			int mes = cal.get(Calendar.MONTH) + 1;
-			int dia = cal.get(Calendar.DATE);
-			int hora = cal.get(Calendar.HOUR);
+	        Calendar calFin = Calendar.getInstance();
+	        calFin.setTime(fecha);
+	        calFin.set(Calendar.HOUR_OF_DAY, 23);
+	        calFin.set(Calendar.MINUTE, 59);
+	        calFin.set(Calendar.SECOND, 59);
+	        calFin.set(Calendar.MILLISECOND, 999);
+	        Date fechaFin = calFin.getTime();
 
-			Session session = sessionFactory.openSession();
-			String stringQuery;
-			Query query;
-			
-			//System.out.println("quew ondaaadaooooo"+idSucursal+"***"+anio+"  "+mes+"diaa"+dia);
+	        Session session = sessionFactory.openSession();
+	        String hql;
+	        Query query;
 
-			//ingreso
-			if (idSucursal == 1) {
-				System.out.println("unoooo");
-				stringQuery = "SELECT COALESCE(SUM(o.total),0) as totalventa FROM RegistroVenta o WHERE YEAR(o.fecha)= :anio "
-						+ " AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia GROUP BY o.id.folio"; // AND  HOUR(o.fecha) > :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-			} else {
-				
-				System.out.println("rerererer");
-				stringQuery = "(select SUM(x.total) from ( select DISTINCT(o.id.folio),total  FROM RegistroVenta o WHERE YEAR(o.fecha)= :anio "
-						+ "  AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia AND o.catUbicacion.id = :uni group by o.id.folio ) as x)"; // AND HOUR(o.fecha) > :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-				query.setInteger("uni", idSucursal);
-			}
-			//System.out.println("quew ondaaa finaalll"+query.uniqueResult());
-			return (BigDecimal) query.uniqueResult();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	        if (idSucursal == 1) {
+	            hql = "SELECT COALESCE(SUM(o.total), 0) " +
+	                  "FROM RegistroVenta o " +
+	                  "WHERE o.fecha >= :inicio AND o.fecha <= :fin";
+	            query = session.createQuery(hql);
+	        } else {
+	            hql = "SELECT COALESCE(SUM(o.total), 0) " +
+	                  "FROM RegistroVenta o " +
+	                  "WHERE o.fecha >= :inicio AND o.fecha <= :fin " +
+	                  "AND o.catUbicacion.id = :uni";
+	            query = session.createQuery(hql);
+	            query.setInteger("uni", idSucursal);
+	        }
+
+	        query.setParameter("inicio", fechaInicio);
+	        query.setParameter("fin", fechaFin);
+
+	        BigDecimal total = (BigDecimal) query.uniqueResult();
+	        session.close();
+	        return total;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return BigDecimal.ZERO;
+	    }
 	}
+
 
 	@Override
-	public BigDecimal obtenerIngresoXDiaXTipo(Date fecha, int tipo, int idSucursal,int idUsuario) {
-		try {
+	public BigDecimal obtenerIngresoXDiaXTipo(Date fecha, int tipo, int idSucursal, int idUsuario) {
+	    try {
+	        // Calcular rango del día
+	        Calendar calInicio = Calendar.getInstance();
+	        calInicio.setTime(fecha);
+	        calInicio.set(Calendar.HOUR_OF_DAY, 0);
+	        calInicio.set(Calendar.MINUTE, 0);
+	        calInicio.set(Calendar.SECOND, 0);
+	        calInicio.set(Calendar.MILLISECOND, 0);
+	        Date fechaInicio = calInicio.getTime();
 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(fecha);
-			int anio = cal.get(Calendar.YEAR);
-			int mes = cal.get(Calendar.MONTH) + 1;
-			int dia = cal.get(Calendar.DATE);
-			int hora = cal.get(Calendar.HOUR);
+	        Calendar calFin = Calendar.getInstance();
+	        calFin.setTime(fecha);
+	        calFin.set(Calendar.HOUR_OF_DAY, 23);
+	        calFin.set(Calendar.MINUTE, 59);
+	        calFin.set(Calendar.SECOND, 59);
+	        calFin.set(Calendar.MILLISECOND, 999);
+	        Date fechaFin = calFin.getTime();
 
-			Session session = sessionFactory.openSession();
-			String stringQuery;
-			Query query;
+	        Session session = sessionFactory.openSession();
+	        StringBuilder hql = new StringBuilder(
+	            "SELECT COALESCE(SUM(o.monto), 0) " +
+	            "FROM RegistroEfectivo o " +
+	            "WHERE o.fecha >= :inicio AND o.fecha <= :fin " +
+	            "AND o.tipo = :tipo " +
+	            "AND o.catUsuario.id = :idUsu "
+	        );
 
-			//ingreso
-			if (idSucursal == 1) {
-				stringQuery = "SELECT COALESCE(SUM(o.monto),0) FROM RegistroEfectivo o WHERE YEAR(o.fecha)= :anio "
-						+ " AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia"
-						+ " AND o.tipo= :tipo AND o.catUsuario.id= :idUsu"; // AND
-																													// HOUR(o.fecha)
-																													// >
-																													// :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-				query.setInteger("tipo", tipo);
-				query.setInteger("idUsu", idUsuario);
-			} else {
-				stringQuery = "SELECT COALESCE(SUM(o.monto),0) FROM RegistroEfectivo o WHERE YEAR(o.fecha)= :anio AND"
-						+ " o.idSucursal = :uni AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia"
-						+ " AND o.tipo= :tipo AND o.catUsuario.id= :idUsu"; // AND
-																										// HOUR(o.fecha)
-																										// > :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-				query.setInteger("uni", idSucursal);
-				query.setInteger("tipo", tipo);
-				query.setInteger("idUsu", idUsuario);
-			}
+	        if (idSucursal != 1) {
+	            hql.append("AND o.idSucursal = :uni ");
+	        }
 
-			return (BigDecimal) query.uniqueResult();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	        Query query = session.createQuery(hql.toString());
+	        query.setParameter("inicio", fechaInicio);
+	        query.setParameter("fin", fechaFin);
+	        query.setInteger("tipo", tipo);
+	        query.setInteger("idUsu", idUsuario);
+
+	        if (idSucursal != 1) {
+	            query.setInteger("uni", idSucursal);
+	        }
+
+	        BigDecimal total = (BigDecimal) query.uniqueResult();
+	        session.close();
+	        return total;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return BigDecimal.ZERO;
+	    }
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RegistroVenta> obtenerRegVentaXDiaConsulta(Date fecha, int idSucursal) {
+	    try {
+	        // Rango de inicio y fin del día
+	        Calendar calInicio = Calendar.getInstance();
+	        calInicio.setTime(fecha);
+	        calInicio.set(Calendar.HOUR_OF_DAY, 0);
+	        calInicio.set(Calendar.MINUTE, 0);
+	        calInicio.set(Calendar.SECOND, 0);
+	        calInicio.set(Calendar.MILLISECOND, 0);
+	        Date fechaInicio = calInicio.getTime();
 
-		try {
+	        Calendar calFin = Calendar.getInstance();
+	        calFin.setTime(fecha);
+	        calFin.set(Calendar.HOUR_OF_DAY, 23);
+	        calFin.set(Calendar.MINUTE, 59);
+	        calFin.set(Calendar.SECOND, 59);
+	        calFin.set(Calendar.MILLISECOND, 999);
+	        Date fechaFin = calFin.getTime();
 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(fecha);
-			int anio = cal.get(Calendar.YEAR);
-			int mes = cal.get(Calendar.MONTH) + 1;
-			int dia = cal.get(Calendar.DATE);
-			int hora = cal.get(Calendar.HOUR);
+	        Session session = sessionFactory.openSession();
+	        StringBuilder hql = new StringBuilder("FROM RegistroVenta o WHERE o.fecha >= :inicio AND o.fecha <= :fin ");
 
-			Session session = sessionFactory.openSession();
-			String stringQuery;
-			Query query;
+	        if (idSucursal != 1) {
+	            hql.append("AND o.catUbicacion.id = :uni ");
+	        }
 
-			if (idSucursal == 1) {
-				stringQuery = "FROM RegistroVenta o WHERE YEAR(o.fecha)= :anio "
-						+ " AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia ORDER BY o.catUbicacion.descripcion"; // AND
-																													// HOUR(o.fecha)
-																													// >
-																													// :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-			} else {
-				stringQuery = "FROM RegistroVenta o WHERE YEAR(o.fecha)= :anio AND"
-						+ " o.catUbicacion.id = :uni AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia"; // AND
-																										// HOUR(o.fecha)
-																										// > :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-				query.setInteger("uni", 6);
-			}
+	        hql.append("ORDER BY o.catUbicacion.descripcion");
 
-			// query.setInteger("hora", hora);
+	        Query query = session.createQuery(hql.toString());
+	        query.setParameter("inicio", fechaInicio);
+	        query.setParameter("fin", fechaFin);
 
-			List<RegistroVenta> obs = query.list();
-			session.close();
-			return obs;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	        if (idSucursal != 1) {
+	            query.setInteger("uni", idSucursal);
+	        }
+
+	        List<RegistroVenta> obs = query.list();
+	        session.close();
+	        return obs;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
 
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<RegistroVenta> obtenerRegVentaXUsuario(Date fecha, int idUsuario) {
-		try {
+	    try {
+	        // Obtener inicio y fin del día
+	        Calendar calInicio = Calendar.getInstance();
+	        calInicio.setTime(fecha);
+	        calInicio.set(Calendar.HOUR_OF_DAY, 0);
+	        calInicio.set(Calendar.MINUTE, 0);
+	        calInicio.set(Calendar.SECOND, 0);
+	        calInicio.set(Calendar.MILLISECOND, 0);
+	        Date fechaInicio = calInicio.getTime();
 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(fecha);
-			int anio = cal.get(Calendar.YEAR);
-			int mes = cal.get(Calendar.MONTH) + 1;
-			int dia = cal.get(Calendar.DATE);
-			int hora = cal.get(Calendar.HOUR);
+	        Calendar calFin = Calendar.getInstance();
+	        calFin.setTime(fecha);
+	        calFin.set(Calendar.HOUR_OF_DAY, 23);
+	        calFin.set(Calendar.MINUTE, 59);
+	        calFin.set(Calendar.SECOND, 59);
+	        calFin.set(Calendar.MILLISECOND, 999);
+	        Date fechaFin = calFin.getTime();
 
-			Session session = sessionFactory.openSession();
-			String stringQuery;
-			Query query;
-			stringQuery = "FROM RegistroVenta o WHERE YEAR(o.fecha)= :anio AND"
-					+ "  MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia AND  o.catUsuario.id = :idUsuario "; // AND
-																										// HOUR(o.fecha)
-																										// > :hora
-			query = session.createQuery(stringQuery);
-			query.setInteger("anio", anio);
-			query.setInteger("mes", mes);
-			query.setInteger("dia", dia);
-			query.setInteger("idUsuario", idUsuario);
-			// query.setInteger("hora", hora);
+	        Session session = sessionFactory.openSession();
+	        String hql = "FROM RegistroVenta o " +
+	                     "WHERE o.fecha >= :inicio AND o.fecha <= :fin " +
+	                     "AND o.catUsuario.id = :idUsuario";
 
-			List<RegistroVenta> ventas = query.list();
-			session.close();
-			return ventas;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	        Query query = session.createQuery(hql);
+	        query.setParameter("inicio", fechaInicio);
+	        query.setParameter("fin", fechaFin);
+	        query.setInteger("idUsuario", idUsuario);
+
+	        List<RegistroVenta> ventas = query.list();
+	        session.close();
+	        return ventas;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
+
 
 	@Override
 	public PanXSucursal panXSucXFechaXCodigo(String codigo, int sucursal, Date fecha) {
@@ -928,51 +968,56 @@ public class BriocheDAO implements Serializable, IBriocheDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RegistroEfectivo> obtenerRegistrosXEstatusXFecha(int estatus, Date fecha, int idSucursal) {
+	    try {
+	        // Inicio del día
+	        Calendar calInicio = Calendar.getInstance();
+	        calInicio.setTime(fecha);
+	        calInicio.set(Calendar.HOUR_OF_DAY, 0);
+	        calInicio.set(Calendar.MINUTE, 0);
+	        calInicio.set(Calendar.SECOND, 0);
+	        calInicio.set(Calendar.MILLISECOND, 0);
+	        Date fechaInicio = calInicio.getTime();
 
-		try {
+	        // Fin del día
+	        Calendar calFin = Calendar.getInstance();
+	        calFin.setTime(fecha);
+	        calFin.set(Calendar.HOUR_OF_DAY, 23);
+	        calFin.set(Calendar.MINUTE, 59);
+	        calFin.set(Calendar.SECOND, 59);
+	        calFin.set(Calendar.MILLISECOND, 999);
+	        Date fechaFin = calFin.getTime();
 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(fecha);
-			int anio = cal.get(Calendar.YEAR);
-			int mes = cal.get(Calendar.MONTH) + 1;
-			int dia = cal.get(Calendar.DATE);
-			int hora = cal.get(Calendar.HOUR);
+	        Session session = sessionFactory.openSession();
+	        StringBuilder hql = new StringBuilder();
+	        hql.append("FROM RegistroEfectivo o ")
+	           .append("WHERE o.estatus = :estatus ")
+	           .append("AND o.fecha >= :inicio AND o.fecha <= :fin ");
 
-			Session session = sessionFactory.openSession();
-			String stringQuery;
-			Query query;
+	        if (idSucursal != 1) {
+	            hql.append("AND o.idSucursal = :idSuc ");
+	        } else {
+	            hql.append("ORDER BY o.idSucursal ");
+	        }
 
-			if (idSucursal == 1) {
-				stringQuery = "FROM RegistroEfectivo o WHERE o.estatus = :estatus AND YEAR(o.fecha)= :anio"
-						+ " AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia ORDER BY o.idSucursal"; // AND HOUR(o.fecha)
-																									// > :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("estatus", estatus);
-				// query.setInteger("idSuc", idSucursal);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-			} else {
-				stringQuery = "FROM RegistroEfectivo o WHERE o.estatus = :estatus AND o.idSucursal= :idSuc AND YEAR(o.fecha)= :anio"
-						+ " AND MONTH(o.fecha)= :mes AND DAY(o.fecha)= :dia"; // AND HOUR(o.fecha) > :hora
-				query = session.createQuery(stringQuery);
-				query.setInteger("estatus", estatus);
-				query.setInteger("anio", anio);
-				query.setInteger("mes", mes);
-				query.setInteger("dia", dia);
-				query.setInteger("idSuc", idSucursal);
-			}
+	        Query query = session.createQuery(hql.toString());
+	        query.setInteger("estatus", estatus);
+	        query.setParameter("inicio", fechaInicio);
+	        query.setParameter("fin", fechaFin);
 
-			// query.setInteger("hora", hora);
+	        if (idSucursal != 1) {
+	            query.setInteger("idSuc", idSucursal);
+	        }
 
-			List<RegistroEfectivo> obs = query.list();
-			session.close();
-			return obs;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	        List<RegistroEfectivo> obs = query.list();
+	        session.close();
+	        return obs;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
+
 
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
